@@ -1,50 +1,44 @@
+import { StatusCodes } from "http-status-codes";
 import {
-  assessAnswerAgainstQuestionService,
-  generateQuestionDraftCoachService,
-} from "../service/geminiTextCoach.service.js";
+  createQuestionService,
+  listQuestionsService,
+} from "../service/question.service.js";
 
-export const assessAnswerAgainstQuestionController = async (req, res, next) => {
+export const createQuestionController = async (req, res, next) => {
   try {
-    const { questionHash } = req.params;
-    const { answerText } = req.body;
+    const { title, content } = req.body;
+    const userId = req.user.id;
 
-    const result = await assessAnswerAgainstQuestionService(
-      questionHash,
-      answerText,
-    );
-
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: "Question not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Answer fit assessed",
-      data: {
-        level: result.level,
-        note: result.note,
-      },
+    const result = await createQuestionService({
+      title,
+      content,
+      userId: req.user.id, //authenticated user
     });
-  } catch (error) {
-    next(error); // handled by error-handler.js middleware
+
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+      message: "Question created successfully",
+      data: result,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const generateQuestionDraftCoachController = async (req, res, next) => {
+export const listQuestionsController = async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const { search, mine } = req.query;
 
-    const result = await generateQuestionDraftCoachService(title, content);
+    const questions = await listQuestionsService({
+      search,
+      mine,
+      userId: req.user.id,
+    });
 
-    return res.status(200).json({
+    res.status(StatusCodes.OK).json({
       success: true,
-      message: "Draft suggestions generated",
-      data: {
-        tips: result.tips,
-      },
+      message: "Questions fetched successfully",
+      data: questions,
     });
   } catch (error) {
     next(error);
