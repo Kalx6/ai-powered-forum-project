@@ -42,6 +42,8 @@ const startServer = async () => {
       'Failed to connect to the database. Server not started.',
       error.message,
     );
+
+    console.error('Please ensure that the database server is running and the connection details are correct.');
     process.exit(1);
   }
 };
