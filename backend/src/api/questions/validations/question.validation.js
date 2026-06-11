@@ -1,53 +1,24 @@
-import Joi from "joi";
+import { body } from "express-validator";
+import { validationErrorHandler } from "../../../middleware/validation-handler.js";
+//import { content } from './../../../../../frontend/node_modules/micromark/lib/initialize/content';
 
-const validateQuestionHash = (req, res, next) => {
-  const schema = Joi.object({
-    questionHash: Joi.string()
-      .length(16)
-      .pattern(/^[a-fA-F0-9]+$/)
-      .required()
-      .messages({
-        "string.length": "questionHash must be exactly 16 characters",
-        "string.pattern.base": "questionHash must be a valid hex string",
-      }),
-  });
+export const createQuestionValidation = [
+  body("title")
+    .notEmpty()
+    .withMessage("Title is required")
+    .isString()
+    .withMessage("Title must be a string")
+    .isLength({ min: 5, max: 255 })
+    .withMessage("Title must be between 5 and 255 characters")
+    .trim(),
 
-  const { error } = schema.validate(req.params);
-  if (error) {
-    return res.status(400).json({ success: false, message: error.message });
-  }
-  next();
-};
-
-const validateAnswerFitBody = (req, res, next) => {
-  const schema = Joi.object({
-    answerText: Joi.string().min(20).required().messages({
-      "string.min": "answerText must be at least 20 characters",
-      "any.required": "answerText is required",
-    }),
-  });
-
-  const { error } = schema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ success: false, message: error.message });
-  }
-  next();
-};
-
-export { validateQuestionHash, validateAnswerFitBody };
-
-export const generateQuestionDraftCoachValidation = (req, res, next) => {
-  const schema = Joi.object({
-    title: Joi.string().optional(),
-    content: Joi.string().required().messages({
-      "any.required": "content is required",
-      "string.empty": "content cannot be empty",
-    }),
-  });
-
-  const { error } = schema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ success: false, message: error.message });
-  }
-  next();
-};
+  body("content")
+    .notEmpty()
+    .withMessage("Content is required")
+    .isString()
+    .withMessage("Content must be a string")
+    .isLength({ min: 10 })
+    .withMessage("Content must be at least 10 characters long")
+    .trim(),
+  validationErrorHandler,
+];
