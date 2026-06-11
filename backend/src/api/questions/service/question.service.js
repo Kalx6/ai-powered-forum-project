@@ -88,3 +88,47 @@ export const listQuestionsService = async ({ search, mine, userId }) => {
 
   return questions;
 };
+
+
+
+export const getQuestionDetailsService = async (questionHash) => {
+  // 1. Get question
+  const questionQuery = `
+    SELECT
+      q.question_id,
+      q.question_hash,
+      q.title,
+      q.content,
+      q.user_id,
+      q.created_at
+    FROM questions q
+    WHERE q.question_hash = ?
+  `;
+
+  const questionResult = await safeExecute(questionQuery, [questionHash]);
+
+  if (!questionResult || questionResult.length === 0) {
+    throw new Error("Question not found");
+  }
+
+  const question = questionResult[0];
+
+  // 2. Get answers
+  const answersQuery = `
+    SELECT
+      a.answer_id,
+      a.content,
+      a.user_id,
+      a.created_at
+    FROM answers a
+    WHERE a.question_id = ?
+    ORDER BY a.created_at DESC
+  `;
+
+  const answers = await safeExecute(answersQuery, [question.question_id]);
+
+  return {
+    ...question,
+    answers,
+  };
+};
