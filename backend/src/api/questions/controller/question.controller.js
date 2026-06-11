@@ -1,8 +1,33 @@
+// src/api/questions/controller/question.controller.js
+import { searchQuestionsSemanticService } from "../service/questions.service.js";
 import {
   assessAnswerAgainstQuestionService,
   generateQuestionDraftCoachService,
 } from "../service/geminiTextCoach.service.js";
 
+// ── T-11: Semantic Search ─────────────────────
+async function searchQuestionsSemanticController(req, res, next) {
+  try {
+    const { query, k, threshold } = req.query;
+
+    const { results, meta } = await searchQuestionsSemanticService({
+      query,
+      k,
+      threshold,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Semantic search completed successfully",
+      data: results,
+      meta,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// ── Leader: Assess Answer Against Question ────
 export const assessAnswerAgainstQuestionController = async (req, res, next) => {
   try {
     const { questionHash } = req.params;
@@ -29,10 +54,11 @@ export const assessAnswerAgainstQuestionController = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error); // handled by error-handler.js middleware
+    next(error);
   }
 };
 
+// ── Leader: Generate Question Draft Coach ─────
 export const generateQuestionDraftCoachController = async (req, res, next) => {
   try {
     const { title, content } = req.body;
@@ -50,3 +76,5 @@ export const generateQuestionDraftCoachController = async (req, res, next) => {
     next(error);
   }
 };
+
+export { searchQuestionsSemanticController };

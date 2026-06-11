@@ -1,30 +1,56 @@
-import express from "express";
+// src/api/questions/routes/question.routes.js
+import { Router } from "express";
 import { authenticateUser } from "../../../middleware/authentication.js";
+import { validationErrorHandler } from "../../../middleware/validation-handler.js";
+
+// ── Validations ───────────────────────────────
 import {
   validateQuestionHash,
   validateAnswerFitBody,
   generateQuestionDraftCoachValidation,
 } from "../validations/question.validation.js";
+import { searchQuestionsValidation } from "../validation/question.validation.js";
+
+// ── Controllers ───────────────────────────────
 import {
   assessAnswerAgainstQuestionController,
   generateQuestionDraftCoachController,
+  searchQuestionsSemanticController,
 } from "../controller/question.controller.js";
 
-const router = express.Router();
+const router = Router();
 
+// ── Leader's routes ───────────────────────────
+
+// POST /api/questions/draft-coach
 router.post(
   "/draft-coach",
   authenticateUser,
   generateQuestionDraftCoachValidation,
+  validationErrorHandler,
   generateQuestionDraftCoachController,
 );
 
+// POST /api/questions/:questionHash/answer-fit
 router.post(
   "/:questionHash/answer-fit",
-  authenticateUser, // 1. verify bearer token
-  validateQuestionHash, // 2. validate :questionHash param
-  validateAnswerFitBody, // 3. validate request body
-  assessAnswerAgainstQuestionController, // 4. handle request
+  authenticateUser,
+  validateQuestionHash,
+  validateAnswerFitBody,
+  validationErrorHandler,
+  assessAnswerAgainstQuestionController,
+);
+
+// ── T-11: Semantic Search ─────────────────────
+
+// GET /api/questions/search
+// IMPORTANT: static route must come BEFORE dynamic /:questionHash routes
+router.get(
+  "/search",
+  authenticateUser,
+  searchQuestionsValidation,
+  validationErrorHandler,
+  searchQuestionsSemanticController,
 );
 
 export default router;
