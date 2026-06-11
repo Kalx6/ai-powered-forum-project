@@ -9,13 +9,17 @@ import {
   validateAnswerFitBody,
   generateQuestionDraftCoachValidation,
 } from "../validations/question.validation.js";
-import { searchQuestionsValidation } from "../validation/question.validation.js";
+import {
+  searchQuestionsValidation,
+  similarQuestionsValidation,
+} from "../validation/question.validation.js";
 
 // ── Controllers ───────────────────────────────
 import {
   assessAnswerAgainstQuestionController,
   generateQuestionDraftCoachController,
   searchQuestionsSemanticController,
+  getSimilarQuestionsController,
 } from "../controller/question.controller.js";
 
 const router = Router();
@@ -51,6 +55,16 @@ router.get(
   searchQuestionsValidation,
   validationErrorHandler,
   searchQuestionsSemanticController,
+);
+
+// ── T-11: Similar Questions by Hash ─────────────
+
+router.get(
+  "/:questionHash/similar",
+  authenticateUser,
+  similarQuestionsValidation,
+  validationErrorHandler,
+  getSimilarQuestionsController,
 );
 
 export default router;

@@ -1,5 +1,8 @@
 // src/api/questions/controller/question.controller.js
-import { searchQuestionsSemanticService } from "../service/questions.service.js";
+import {
+  searchQuestionsSemanticService,
+  getSimilarQuestionsService,
+} from "../service/questions.service.js";
 import {
   assessAnswerAgainstQuestionService,
   generateQuestionDraftCoachService,
@@ -19,6 +22,30 @@ async function searchQuestionsSemanticController(req, res, next) {
     return res.status(200).json({
       success: true,
       message: "Semantic search completed successfully",
+      data: results,
+      meta,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// ── T-11: Similar Questions by Hash ─────────────
+
+async function getSimilarQuestionsController(req, res, next) {
+  try {
+    const { questionHash } = req.params;
+    const { k, threshold } = req.query;
+
+    const { results, meta } = await getSimilarQuestionsService({
+      questionHash,
+      k,
+      threshold,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Similar questions fetched successfully",
       data: results,
       meta,
     });
@@ -77,4 +104,4 @@ export const generateQuestionDraftCoachController = async (req, res, next) => {
   }
 };
 
-export { searchQuestionsSemanticController };
+export { searchQuestionsSemanticController, getSimilarQuestionsController };
