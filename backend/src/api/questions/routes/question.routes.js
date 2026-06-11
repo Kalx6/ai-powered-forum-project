@@ -1,30 +1,33 @@
 import express from "express";
 import { authenticateUser } from "../../../middleware/authentication.js";
 import {
-  validateQuestionHash,
-  validateAnswerFitBody,
-  generateQuestionDraftCoachValidation,
-} from "../validations/question.validation.js";
-import {
-  assessAnswerAgainstQuestionController,
-  generateQuestionDraftCoachController,
+  createQuestionController,
+  listQuestionsController,
+  getQuestionDetailsController,
 } from "../controller/question.controller.js";
+import { createQuestionValidation } from "../validations/question.validation.js";
 
 const router = express.Router();
 
+// POST /api/questions
 router.post(
-  "/draft-coach",
+  "/",
   authenticateUser,
-  generateQuestionDraftCoachValidation,
-  generateQuestionDraftCoachController,
+  createQuestionValidation,
+  createQuestionController,
 );
 
-router.post(
-  "/:questionHash/answer-fit",
-  authenticateUser, // 1. verify bearer token
-  validateQuestionHash, // 2. validate :questionHash param
-  validateAnswerFitBody, // 3. validate request body
-  assessAnswerAgainstQuestionController, // 4. handle request
+// Get/api/questions
+router.get(
+  "/", 
+  authenticateUser, 
+  listQuestionsController
+);
+
+router.get(
+  "/:questionHash", 
+  authenticateUser,
+  getQuestionDetailsController
 );
 
 export default router;
