@@ -5,45 +5,25 @@ import { validationErrorHandler } from "../../../middleware/validation-handler.j
 
 // ── Validations ───────────────────────────────
 import {
+  similarQuestionsValidation,
+  searchQuestionsValidation,
+  createQuestionValidation,
   validateQuestionHash,
   validateAnswerFitBody,
   generateQuestionDraftCoachValidation,
 } from "../validations/question.validation.js";
-import {
-  searchQuestionsValidation,
-  similarQuestionsValidation,
-} from "../validation/question.validation.js";
 
 // ── Controllers ───────────────────────────────
 import {
+  createQuestionController,
+  listQuestionsController,
+  getQuestionDetailsController,
   assessAnswerAgainstQuestionController,
   generateQuestionDraftCoachController,
   searchQuestionsSemanticController,
   getSimilarQuestionsController,
 } from "../controller/question.controller.js";
-
 const router = Router();
-
-// ── Leader's routes ───────────────────────────
-
-// POST /api/questions/draft-coach
-router.post(
-  "/draft-coach",
-  authenticateUser,
-  generateQuestionDraftCoachValidation,
-  validationErrorHandler,
-  generateQuestionDraftCoachController,
-);
-
-// POST /api/questions/:questionHash/answer-fit
-router.post(
-  "/:questionHash/answer-fit",
-  authenticateUser,
-  validateQuestionHash,
-  validateAnswerFitBody,
-  validationErrorHandler,
-  assessAnswerAgainstQuestionController,
-);
 
 // ── T-11: Semantic Search ─────────────────────
 
@@ -65,6 +45,38 @@ router.get(
   similarQuestionsValidation,
   validationErrorHandler,
   getSimilarQuestionsController,
+);
+
+// ── Zaida ───────────────────────────
+// POST /api/questions
+router.post(
+  "/",
+  authenticateUser,
+  createQuestionValidation,
+  createQuestionController,
+);
+// Get/api/questions
+router.get("/", authenticateUser, listQuestionsController);
+
+router.get("/:questionHash", authenticateUser, getQuestionDetailsController);
+
+// ── Leader's routes ───────────────────────────
+
+// POST /api/questions/draft-coach
+router.post(
+  "/draft-coach",
+  authenticateUser,
+  generateQuestionDraftCoachValidation,
+  generateQuestionDraftCoachController,
+);
+
+// POST /api/questions/:questionHash/answer-fit
+router.post(
+  "/:questionHash/answer-fit",
+  authenticateUser, // 1. verify bearer token
+  validateQuestionHash, // 2. validate :questionHash param
+  validateAnswerFitBody, // 3. validate request body
+  assessAnswerAgainstQuestionController, // 4. handle request
 );
 
 export default router;

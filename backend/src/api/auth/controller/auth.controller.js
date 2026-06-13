@@ -1,5 +1,5 @@
-import { StatusCodes } from 'http-status-codes';
-import { registerService, loginService } from '../service/auth.service.js';
+import { StatusCodes } from "http-status-codes";
+import { registerService, loginService } from "../service/auth.service.js";
 
 /**
  * Handles user registration requests.
@@ -22,7 +22,7 @@ export const registerController = async (req, res, next) => {
 
     res.status(StatusCodes.CREATED).json({
       success: true,
-      message: 'User registered successfully.',
+      message: "User registered successfully.",
       user: newUser,
     });
   } catch (error) {
@@ -46,11 +46,20 @@ export const loginController = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       success: true,
-      message: 'Login successful.',
+      message: "Login successful.",
       user: authResult.user,
       token: authResult.token,
     });
   } catch (error) {
     next(error);
   }
+};
+
+export const logoutController = (req, res) => {
+  // JWT is stateless — logout is handled on frontend
+  // Backend just confirms the request
+  return res.status(200).json({
+    success: true,
+    msg: "Logged out successfully",
+  });
 };
