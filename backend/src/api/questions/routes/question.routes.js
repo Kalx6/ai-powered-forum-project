@@ -5,6 +5,7 @@ import { validationErrorHandler } from "../../../middleware/validation-handler.j
 
 // ── Validations ───────────────────────────────
 import {
+  similarQuestionsValidation,
   searchQuestionsValidation,
   createQuestionValidation,
   validateQuestionHash,
@@ -20,6 +21,7 @@ import {
   assessAnswerAgainstQuestionController,
   generateQuestionDraftCoachController,
   searchQuestionsSemanticController,
+  getSimilarQuestionsController,
 } from "../controller/question.controller.js";
 const router = Router();
 
@@ -33,6 +35,16 @@ router.get(
   searchQuestionsValidation,
   validationErrorHandler,
   searchQuestionsSemanticController,
+);
+
+// ── T-11: Similar Questions by Hash ─────────────
+
+router.get(
+  "/:questionHash/similar",
+  authenticateUser,
+  similarQuestionsValidation,
+  validationErrorHandler,
+  getSimilarQuestionsController,
 );
 
 // ── Zaida ───────────────────────────

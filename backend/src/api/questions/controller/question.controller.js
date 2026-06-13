@@ -1,7 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 // src/api/questions/controller/question.controller.js
-import { 
+
+import {
   searchQuestionsSemanticService,
+  getSimilarQuestionsService,
 } from "../service/semantic.search.questions.service.js";
 import {
   createQuestionService,
@@ -26,6 +28,30 @@ export async function searchQuestionsSemanticController(req, res, next) {
     return res.status(200).json({
       success: true,
       message: "Semantic search completed successfully",
+      data: results,
+      meta,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// ── T-11: Similar Questions by Hash ─────────────
+
+async function getSimilarQuestionsController(req, res, next) {
+  try {
+    const { questionHash } = req.params;
+    const { k, threshold } = req.query;
+
+    const { results, meta } = await getSimilarQuestionsService({
+      questionHash,
+      k,
+      threshold,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Similar questions fetched successfully",
       data: results,
       meta,
     });
@@ -83,6 +109,7 @@ export const generateQuestionDraftCoachController = async (req, res, next) => {
   }
 };
 
+export { getSimilarQuestionsController };
 // ── Zaida ─────
 
 export const createQuestionController = async (req, res, next) => {
@@ -127,7 +154,7 @@ export const listQuestionsController = async (req, res, next) => {
 };
 
 export const getQuestionDetailsController = async (req, res, next) => {
-  console.log("questionHash received:", req.params.questionHash)
+  console.log("questionHash received:", req.params.questionHash);
   try {
     const { questionHash } = req.params;
 

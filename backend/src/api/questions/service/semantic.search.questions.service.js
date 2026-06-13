@@ -1,7 +1,10 @@
 // src/api/questions/question.service.js
 import { GoogleGenAI } from "@google/genai";
 import { db, safeExecute } from "../../../../db/config.js";
-import { ServiceUnavailableError } from "../../../utils/errors/index.js";
+import {
+  ServiceUnavailableError,
+  NotFoundError,
+} from "../../../utils/errors/index.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -126,6 +129,59 @@ async function fetchQuestionsByIds(questionIds) {
   return rows;
 }
 
+//Fetch the source question by using questionHash
+
+async function fetchSourceVector(questionHash) {
+  const rows = await safeExecute(
+    `SELECT
+       q.question_id,
+       qv.embedding
+     FROM      questions        q
+     INNER JOIN question_vectors qv
+             ON qv.question_id = q.question_id
+            AND qv.status      = 'ready'
+     WHERE q.question_hash = ?
+     LIMIT 1`,
+    [questionHash],
+  );
+
+  if (rows.length === 0) {
+    throw new NotFoundError(
+      "Question not found or its embedding is not ready yet.",
+    );
+  }
+
+  const row = rows[0];
+
+  return {
+    sourceQuestionId: row.question_id,
+    sourceEmbedding:
+      typeof row.embedding === "string"
+        ? JSON.parse(row.embedding)
+        : row.embedding,
+  };
+}
+
+//Fetch other qustion by excluding the source question
+
+async function fetchOtherReadyVectors(excludeQuestionId) {
+  const rows = await safeExecute(
+    `SELECT question_id, embedding
+     FROM   question_vectors
+     WHERE  status      = 'ready'
+       AND  question_id != ?`,
+    [excludeQuestionId],
+  );
+
+  return rows.map((row) => ({
+    questionId: row.question_id,
+    embedding:
+      typeof row.embedding === "string"
+        ? JSON.parse(row.embedding)
+        : row.embedding,
+  }));
+}
+
 // ─────────────────────────────────────────────
 // searchQuestionsSemanticService({ query, k, threshold })
 // Orchestrator — calls helpers in sequence, shapes the response.
@@ -185,4 +241,72 @@ async function searchQuestionsSemanticService({ query, k, threshold }) {
   return { results, meta: { ...meta, total: results.length } };
 }
 
-export { searchQuestionsSemanticService };
+//──────────────────────────────────────────────────────────────
+// getSimilarQuestionsService({ questionHash, k, threshold })
+// Orchestrator — vector similarity search by question hash.
+// ──────────────────────────────────────────────────────────────
+async function getSimilarQuestionsService({ questionHash, k, threshold }) {
+  const limit = k ?? DEFAULT_K;
+  const minScore = threshold ?? RECOMMEND_THRESHOLD;
+
+  // Step 1 — get source vector (throws 404 if not found)
+  const { sourceQuestionId, sourceEmbedding } =
+    await fetchSourceVector(questionHash);
+
+  // Step 2 — get all other vectors, source already excluded at DB level
+  const otherVectors = await fetchOtherReadyVectors(sourceQuestionId);
+
+  // Step 3 — score every candidate against the source vector
+  const scored = otherVectors.map(({ questionId, embedding }) => ({
+    questionId,
+    score: cosineSimilarity(sourceEmbedding, embedding),
+  }));
+
+  // Step 4 — filter → sort → limit
+  const topMatches = scored
+    .filter(({ score }) => score >= minScore)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+
+  const meta = {
+    total: topMatches.length,
+    k: limit,
+    threshold: minScore,
+    query: null, // hash-based, not text search
+    questionHash: questionHash, // the source hash
+  };
+
+  if (topMatches.length === 0) return { results: [], meta };
+
+  // Step 5 — single DB query for all matching details (no N+1)
+  const matchedIds = topMatches.map(({ questionId }) => questionId);
+  const questions = await fetchQuestionsByIds(matchedIds);
+
+  // O(1) score lookup per question
+  const scoreMap = new Map(
+    topMatches.map(({ questionId, score }) => [questionId, score]),
+  );
+
+  // Step 6 — shape response, re-sort after DB fetch
+  const results = questions
+    .map((q) => ({
+      id: q.id,
+      questionHash: q.questionHash,
+      title: q.title,
+      content: q.content,
+      answerCount: Number(q.answerCount),
+      createdAt: q.createdAt,
+      updatedAt: q.updatedAt,
+      author: {
+        id: q.authorId,
+        firstName: q.firstName,
+        lastName: q.lastName,
+      },
+      score: parseFloat(scoreMap.get(q.id).toFixed(6)),
+    }))
+    .sort((a, b) => b.score - a.score);
+
+  return { results, meta: { ...meta, total: results.length } };
+}
+
+export { searchQuestionsSemanticService, getSimilarQuestionsService };
