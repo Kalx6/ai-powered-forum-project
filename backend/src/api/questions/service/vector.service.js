@@ -10,13 +10,20 @@ export const normalizeQuestionText = (text) => {
 };
 
 export const generateQuestionEmbedding = async (text) => {
-  const response = await ai.models.embedContent({
-    model: "text-embedding-004",
-    contents: text,
-    taskType: "RETRIEVAL_DOCUMENT",
-  });
+  try {
+    const response = await ai.models.embedContent({
+      model: "gemini-embedding-001", // ✅ available on your key
+      contents: text,
+      config: {
+        taskType: "RETRIEVAL_DOCUMENT",
+      },
+    });
 
-  return response.embeddings[0].values;
+    return response.embeddings[0].values;
+  } catch (error) {
+    console.error("Error generating question embedding:", error);
+    throw error;
+  }
 };
 
 export const storeQuestionVector = async ({

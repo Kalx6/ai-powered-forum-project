@@ -4,13 +4,13 @@ import { authenticateUser } from "../../../middleware/authentication.js";
 import { validationErrorHandler } from "../../../middleware/validation-handler.js";
 
 // ── Validations ───────────────────────────────
-import { 
+import {
+  searchQuestionsValidation,
   createQuestionValidation,
   validateQuestionHash,
   validateAnswerFitBody,
   generateQuestionDraftCoachValidation,
 } from "../validations/question.validation.js";
-import { searchQuestionsValidation,createQuestionValidation } from "../validation/question.validation.js";
 
 // ── Controllers ───────────────────────────────
 import {
@@ -23,48 +23,6 @@ import {
 } from "../controller/question.controller.js";
 const router = Router();
 
-// ── Leader's routes ───────────────────────────
-
-// POST /api/questions/draft-coach
-router.post(
-  "/",
-  authenticateUser,
-  createQuestionValidation,
-  createQuestionController,
-);
-// POST /api/questions/:questionHash/answer-fit
-router.post(
-  "/:questionHash/answer-fit",
-  authenticateUser,
-  validateQuestionHash,
-  validateAnswerFitBody,
-  validationErrorHandler,
-  assessAnswerAgainstQuestionController,
-);
-
-// ── Zaida ───────────────────────────
-// POST /api/questions
-router.post(
-  "/",
-  authenticateUser,
-  createQuestionValidation,
-  createQuestionController,
-);
-
-// Get/api/questions
-router.get(
-  "/", 
-  authenticateUser, 
-  listQuestionsController
-);
-
-router.get(
-  "/:questionHash", 
-  authenticateUser,
-  getQuestionDetailsController
-);
-
-
 // ── T-11: Semantic Search ─────────────────────
 
 // GET /api/questions/search
@@ -75,6 +33,38 @@ router.get(
   searchQuestionsValidation,
   validationErrorHandler,
   searchQuestionsSemanticController,
+);
+
+// ── Zaida ───────────────────────────
+// POST /api/questions
+router.post(
+  "/",
+  authenticateUser,
+  createQuestionValidation,
+  createQuestionController,
+);
+// Get/api/questions
+router.get("/", authenticateUser, listQuestionsController);
+
+router.get("/:questionHash", authenticateUser, getQuestionDetailsController);
+
+// ── Leader's routes ───────────────────────────
+
+// POST /api/questions/draft-coach
+router.post(
+  "/draft-coach",
+  authenticateUser,
+  generateQuestionDraftCoachValidation,
+  generateQuestionDraftCoachController,
+);
+
+// POST /api/questions/:questionHash/answer-fit
+router.post(
+  "/:questionHash/answer-fit",
+  authenticateUser, // 1. verify bearer token
+  validateQuestionHash, // 2. validate :questionHash param
+  validateAnswerFitBody, // 3. validate request body
+  assessAnswerAgainstQuestionController, // 4. handle request
 );
 
 export default router;

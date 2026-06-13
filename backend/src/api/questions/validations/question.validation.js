@@ -2,6 +2,63 @@ import { body } from "express-validator";
 import { validationErrorHandler } from "../../../middleware/validation-handler.js";
 //import { content } from './../../../../../frontend/node_modules/micromark/lib/initialize/content';
 
+// src/api/questions/question.validation.js
+import { query } from "express-validator";
+
+import Joi from "joi";
+
+const validateQuestionHash = (req, res, next) => {
+  const schema = Joi.object({
+    questionHash: Joi.string()
+      .length(16)
+      .pattern(/^[a-fA-F0-9]+$/)
+      .required()
+      .messages({
+        "string.length": "questionHash must be exactly 16 characters",
+        "string.pattern.base": "questionHash must be a valid hex string",
+      }),
+  });
+
+  const { error } = schema.validate(req.params);
+  if (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+  next();
+};
+
+const validateAnswerFitBody = (req, res, next) => {
+  const schema = Joi.object({
+    answerText: Joi.string().min(20).required().messages({
+      "string.min": "answerText must be at least 20 characters",
+      "any.required": "answerText is required",
+    }),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+  next();
+};
+
+export { validateQuestionHash, validateAnswerFitBody };
+
+export const generateQuestionDraftCoachValidation = (req, res, next) => {
+  const schema = Joi.object({
+    title: Joi.string().optional(),
+    content: Joi.string().required().messages({
+      "any.required": "content is required",
+      "string.empty": "content cannot be empty",
+    }),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+  next();
+};
+
 export const createQuestionValidation = [
   body("title")
     .notEmpty()
@@ -22,3 +79,26 @@ export const createQuestionValidation = [
     .trim(),
   validationErrorHandler,
 ];
+
+const searchQuestionsValidation = [
+  query("query")
+    .trim()
+    .exists({ checkFalsy: true })
+    .withMessage("Search query is required")
+    .isLength({ min: 5 })
+    .withMessage("Search query must be at least 5 characters"),
+
+  query("k")
+    .optional()
+    .isInt({ min: 1, max: 20 })
+    .withMessage("k must be an integer between 1 and 20")
+    .toInt(),
+
+  query("threshold")
+    .optional()
+    .isFloat({ min: 0, max: 1 })
+    .withMessage("Threshold must be a number between 0 and 1")
+    .toFloat(),
+];
+
+export { searchQuestionsValidation };

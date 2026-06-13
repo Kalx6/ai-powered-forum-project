@@ -1,12 +1,17 @@
 import { StatusCodes } from "http-status-codes";
 // src/api/questions/controller/question.controller.js
-import { searchQuestionsSemanticService } from "../service/questions.service.js";
+import { 
+  searchQuestionsSemanticService,
+} from "../service/semantic.search.questions.service.js";
 import {
   createQuestionService,
   listQuestionsService,
   getQuestionDetailsService,
 } from "../service/question.service.js";
-
+import {
+  assessAnswerAgainstQuestionService,
+  generateQuestionDraftCoachService,
+} from "../service/geminiTextCoach.service.js";
 // ── T-11: Semantic Search ─────────────────────
 export async function searchQuestionsSemanticController(req, res, next) {
   try {
@@ -122,6 +127,7 @@ export const listQuestionsController = async (req, res, next) => {
 };
 
 export const getQuestionDetailsController = async (req, res, next) => {
+  console.log("questionHash received:", req.params.questionHash)
   try {
     const { questionHash } = req.params;
 

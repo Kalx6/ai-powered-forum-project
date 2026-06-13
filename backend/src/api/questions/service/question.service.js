@@ -23,7 +23,6 @@ export const createQuestionService = async ({ title, content, userId }) => {
 
   try {
     const embedding = await generateQuestionEmbedding(sourceText);
-
     await storeQuestionVector({
       questionId,
       sourceText,
@@ -88,8 +87,6 @@ export const listQuestionsService = async ({ search, mine, userId }) => {
 
   return questions;
 };
-
-
 
 export const getQuestionDetailsService = async (questionHash) => {
   // 1. Get question
