@@ -1,3 +1,10 @@
+import { body } from "express-validator";
+import { validationErrorHandler } from "../../../middleware/validation-handler.js";
+//import { content } from './../../../../../frontend/node_modules/micromark/lib/initialize/content';
+
+// src/api/questions/question.validation.js
+import { query } from "express-validator";
+
 import Joi from "joi";
 
 const validateQuestionHash = (req, res, next) => {
@@ -51,3 +58,47 @@ export const generateQuestionDraftCoachValidation = (req, res, next) => {
   }
   next();
 };
+
+export const createQuestionValidation = [
+  body("title")
+    .notEmpty()
+    .withMessage("Title is required")
+    .isString()
+    .withMessage("Title must be a string")
+    .isLength({ min: 5, max: 255 })
+    .withMessage("Title must be between 5 and 255 characters")
+    .trim(),
+
+  body("content")
+    .notEmpty()
+    .withMessage("Content is required")
+    .isString()
+    .withMessage("Content must be a string")
+    .isLength({ min: 10 })
+    .withMessage("Content must be at least 10 characters long")
+    .trim(),
+  validationErrorHandler,
+];
+
+const searchQuestionsValidation = [
+  query("query")
+    .trim()
+    .exists({ checkFalsy: true })
+    .withMessage("Search query is required")
+    .isLength({ min: 5 })
+    .withMessage("Search query must be at least 5 characters"),
+
+  query("k")
+    .optional()
+    .isInt({ min: 1, max: 20 })
+    .withMessage("k must be an integer between 1 and 20")
+    .toInt(),
+
+  query("threshold")
+    .optional()
+    .isFloat({ min: 0, max: 1 })
+    .withMessage("Threshold must be a number between 0 and 1")
+    .toFloat(),
+];
+
+export { searchQuestionsValidation };
