@@ -1,0 +1,497 @@
+/* ─── page wrapper ─────────────────────────────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  /* max-width: 820px; */
+  margin: 0 auto;
+}
+
+/* ─── page header ──────────────────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pageHeader__eyebrow {
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  color: #f66d24;
+  margin: 0;
+}
+
+.pageHeader__heading {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pageHeader__sub {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+/* ─── tips card ────────────────────────────────────────────────────────────── */
+.tips {
+  background: var(--color-background-primary);
+  border-left: 5px solid #f66d24;
+  border-right: 1px solid #f66d24;
+  border-top: 1px solid #f66d24;
+  border-bottom: 1px solid #f66d24;
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tips__heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.tips__intro {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.tips__subheading {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0.25rem 0 0;
+}
+
+.tips__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tips__list li {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.tips__list li strong {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+/* ─── form card ────────────────────────────────────────────────────────────── */
+.card {
+  background: white;
+  border: 0.5px solid lightgray;
+  border-radius: 10px;
+  padding: 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── submit error banner ──────────────────────────────────────────────────── */
+.submitError {
+  padding: 0.75rem 1rem;
+  background: #FEE2E2;
+  border-radius: var(--border-radius-md);
+  font-size: 0.875rem;
+  color: #f66d24;
+  border: 0.5px solid #FECACA;
+}
+
+@media (prefers-color-scheme: dark) {
+  .submitError {
+    background: #ff8a8a;
+    border-color: #ff8b64;
+    color: black;
+    border-radius: 7px;
+  }
+}
+
+/* ─── form fields ──────────────────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field__label {
+  font-size: 0.9375rem;
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.field__hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.field__input {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9375rem;
+  border: 0.5px solid #e08351;;
+  border-radius: 10px;
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  width: 80%;
+  height: 30%;
+  box-sizing: border-box;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  /* margin: 2px 0 0 6px; */
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: #f66d24;
+  box-shadow: 0 0 0 2px rgba(216, 90, 48, 0.1);
+}
+
+.field__input--error {
+  border-color: #F87171;
+}
+
+.field__input--error:focus {
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.18);
+}
+
+.field__error {
+  font-size: 0.8125rem;
+  color: #D85A30;
+  margin: 0;
+}
+
+/* ─── rich editor ──────────────────────────────────────────────────────────── */
+.richEditor {
+  border: 0.5px solid #f5732d;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-background-primary);
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+.richEditor:focus-within {
+  border-color: #f66d24;
+  box-shadow: 0 0 0 2px rgba(216, 90, 48, 0.1);
+}
+
+.richEditor--error {
+  border-color: #F87171;
+}
+
+.richEditor--error:focus-within {
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.18);
+}
+
+/* toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.45rem 0.75rem;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: rgb(228, 234, 238);
+}
+
+.toolbar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 26px;
+  border-radius: var(--border-radius-md);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.1s;
+}
+
+.toolbar__btn:hover {
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+}
+
+.toolbar__count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.richEditor__textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  line-height: 1.6;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.richEditor__textarea:focus {
+  outline: none;
+}
+
+/* ─── AI coach row ─────────────────────────────────────────────────────────── */
+.coachRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.coachRow__btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.coachRow__btn:hover:not(:disabled) {
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+}
+
+.coachRow__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.coachRow__note {
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary);
+}
+
+/* ─── coach feedback panel ─────────────────────────────────────────────────── */
+.coachPanel {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.1rem;
+}
+
+.coachPanel__heading {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 0.6rem;
+}
+
+.coachPanel__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.coachPanel__list li {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.coachPanel__empty {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ─── form actions ─────────────────────────────────────────────────────────── */
+.formActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 0.5rem;
+  border-top: 0.5px solid var(--color-border-tertiary);
+}
+
+.formActions__cancel {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  background: transparent;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.formActions__cancel:hover:not(:disabled) {
+  background: var(--color-background-secondary);
+}
+
+.formActions__cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.formActions__submit {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: #D85A30;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.formActions__submit:hover:not(:disabled) {
+  background: #C0471F;
+}
+
+.formActions__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── success screen ───────────────────────────────────────────────────────── */
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  gap: 1rem;
+}
+
+.success__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #DCFCE7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .success__icon {
+    background: #14532D;
+  }
+}
+
+.success__heading {
+  font-size: 1.375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.success__body {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  max-width: 500px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.success__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.success__textBtn {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius-md);
+  transition: color 0.12s;
+}
+
+.success__textBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.success__primaryBtn {
+  padding: 0.55rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: #D85A30;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.success__primaryBtn:hover {
+  background: #C0471F;
+}
+
+.success__secondaryBtn {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.success__secondaryBtn:hover {
+  background: var(--color-background-secondary);
+}
+
+/* ─── responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .page {
+    padding: 1rem 0.75rem;
+  }
+
+  .pageHeader__heading {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .tips {
+    padding: 1.1rem 1.25rem;
+  }
+}

@@ -1,0 +1,97 @@
+/**
+ * question.service.js
+ * All API calls related to questions and answers.
+ * Import this in Dashboard, PostQuestion, QuestionDetail, MyQuestions.
+ */
+
+import { apiClient } from '../core/api.client';
+
+/**
+ * GET /api/questions
+ * Fetch all questions, optionally filtered by keyword search.
+ * @param {{ search?: string, limit?: number, offset?: number }} params
+ */
+export async function getQuestions({ search, limit = 100, offset = 0 } = {}) {
+  const res = await apiClient.get('/api/questions', {
+    params: {
+      ...(search ? { q: search } : {}),
+      limit,
+      offset,
+    },
+  });
+  return res.data;
+}
+
+/**
+ * GET /api/questions/search
+ * Semantic (AI vector) search for questions.
+ * @param {string} query
+ * @param {{ limit?: number, offset?: number }} opts
+ */
+export async function searchQuestionsSemantic(query, { limit = 100, offset = 0 } = {}) {
+  const res = await apiClient.get('/api/questions/search', {
+    params: { q: query, limit, offset },
+  });
+  return res.data;
+}
+
+/**
+ * GET /api/questions/:questionHash
+ * Fetch a single question and all its answers.
+ * @param {string} questionHash
+ */
+export async function getQuestion(questionHash) {
+  const res = await apiClient.get(`/api/questions/${questionHash}`);
+  return res.data;
+}
+
+/**
+ * POST /api/questions
+ * Create a new question.
+ * @param {{ title: string, content: string }} data
+ */
+export async function createQuestion(data) {
+  const res = await apiClient.post('/api/questions', data);
+  return res.data;
+}
+
+/**
+ * POST /api/questions/draft-coach
+ * Get AI feedback on a question draft.
+ * @param {{ title: string, content: string }} data
+ */
+export async function generateQuestionDraftCoach(data) {
+  const res = await apiClient.post('/api/questions/draft-coach', data);
+  return res.data;
+}
+
+/**
+ * GET /api/questions/:questionHash/similar
+ * Get semantically similar questions based on an existing question's vector.
+ * @param {string} questionHash
+ */
+export async function getSimilarQuestions(questionHash) {
+  const res = await apiClient.get(`/api/questions/${questionHash}/similar`);
+  return res.data;
+}
+
+/**
+ * POST /api/questions/:questionHash/answer-fit
+ * Evaluate how well a draft answer addresses the question.
+ * @param {string} questionHash
+ * @param {{ content: string }} data
+ */
+export async function evaluateAnswerFit(questionHash, data) {
+  const res = await apiClient.post(`/api/questions/${questionHash}/answer-fit`, data);
+  return res.data;
+}
+
+/**
+ * POST /api/answers
+ * Submit an answer to a question.
+ * @param {{ questionHash: string, content: string }} data
+ */
+export async function createAnswer(data) {
+  const res = await apiClient.post('/api/answers', data);
+  return res.data;
+}
