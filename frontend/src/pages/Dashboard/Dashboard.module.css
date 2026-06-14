@@ -5,12 +5,13 @@
   /* gap: 1.5rem; */
   /* padding: 1.5rem; */
   /* max-width: 960px; */
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 /* ─── hero section ─────────────────────────────────────────────────────────── */
 .hero {
-  /* background: var(--color-background-primary); */
+  /* background: var(--color-background-primary); */ 
   background: white;
   border: 1px solid lightgray;
   border-radius: 10px;
@@ -25,21 +26,21 @@
   font-size: 0.75rem;
   font-weight: bold;
   letter-spacing: 0.06em;
-  color: #D85A30;
+  color: #EA580C;
   margin: 0;
 }
 
 .hero__heading {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--color-text-primary);
+  color: black;
   margin: 0;
   line-height: 1.2;
 }
 
 .hero__sub {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  color: black;
   margin: 0;
   max-width: 580px;
   line-height: 1.6;
@@ -50,7 +51,8 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-top: 0.5rem;
+  margin-top: 9px;
+  margin-top: 10spx;
 }
 
 @media (max-width: 640px) {
@@ -64,8 +66,8 @@
   align-items: flex-start;
   gap: 12px;
   padding: 1rem 1.1rem;
-  background: rgba(213, 207, 207, 0.3);
-  border: 0.5px solid var(--color-border-tertiary);
+  background: #F9FAFC;
+  border: 0.5px solid lightgray;
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
@@ -74,21 +76,21 @@
 }
 
 .quickCard:hover {
-  background: rgb(165, 165, 165, 0.8);
-  border-color: var(--color-border-secondary);
+  background: #aeb5bd;
+  border-color: lightgray;
 }
 
 .quickCard__icon {
   flex-shrink: 0;
   width: 36px;
   height: 36px;
-  border-radius: var(--border-radius-md);
-  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 10px;
+  border: 0.5px solid lightgray;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #D85A30;
-  background: var(--color-background-secondary);
+  color: #EA580C;
+  background: #f8faff;
 }
 
 .quickCard__copy {
@@ -151,14 +153,16 @@
 }
 
 .statCard {
-  background: rgba(213, 207, 207, 0.3);
+  background: #F9FAFC;
+  border: 0.5px solid lightgray;
   border-radius: 10px;
   padding: 0.875rem 1rem;
 }
 
 .statCard__label {
   font-size: 0.8125rem;
-  color: var(--color-text-secondary);
+  color: black;
+  font-weight: bold;
   margin: 0 0 6px;
 }
 
@@ -206,8 +210,8 @@
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.05em;
-  border-radius: var(--border-radius-md);
-  background: #D85A30;
+  border-radius: 8px;
+  background: #EA580C;
   color: #fff;
   white-space: nowrap;
   align-self: center;
@@ -314,15 +318,15 @@
   font-weight: 500;
   letter-spacing: 0.06em;
   padding: 2px 6px;
-  border-radius: var(--border-radius-md);
-  background: #FAECE7;
+  border-radius: 5px;
+  background: rgb(255, 216, 202);
   color: #993C1D;
-  border: 0.5px solid #F0997B;
+  border: 0.5px solid #846459;
 }
 
 @media (prefers-color-scheme: dark) {
   .row__ownBadge {
-    background: #ff2b6e;
+    background: rgb(255, 216, 202);
     color: #ff8b64;
     border-color: #ff8b64;
   }
