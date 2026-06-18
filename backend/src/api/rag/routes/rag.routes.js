@@ -4,6 +4,7 @@ import {
   searchDocumentController,
   queryDocumentController,
   getDocumentMetaController,
+  getDocumentFileController,
 } from "../controller/rag.controller.js";
 import { documentIdParamValidation } from "../validations/rag.validation.js";
 
@@ -27,6 +28,14 @@ router.get(
   authenticateUser,
   documentIdParamValidation,
   getDocumentMetaController,
+);
+
+// T-24 - Stream Document PDF
+router.get(
+  "/documents/:documentId/file",
+  authenticateUser,
+  documentIdParamValidation,
+  getDocumentFileController,
 );
 
 export default router;

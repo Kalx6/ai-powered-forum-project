@@ -184,3 +184,27 @@ export const getDocumentMetaService = async (documentId, userId) => {
   // 3. Return the document record
   return rows[0];
 };
+
+// add below getDocumentMetaService
+
+export const assertOwnedDocument = async (documentId, userId) => {
+  // Fetch document matching both documentId and userId
+  const rows = await safeExecute(
+    `SELECT
+      document_id,
+      storage_path,
+      title,
+      mime_type
+    FROM documents
+    WHERE document_id = ? AND user_id = ?
+    LIMIT 1`,
+    [documentId, userId]
+  );
+
+  // Return 404 if not found or doesn't belong to user
+  if (!rows || rows.length === 0) {
+    throw new NotFoundError("Document not found");
+  }
+
+  return rows[0]; // { document_id, storage_path, title, mime_type }
+};

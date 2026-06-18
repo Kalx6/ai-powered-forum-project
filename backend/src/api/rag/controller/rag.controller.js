@@ -1,8 +1,11 @@
 import { StatusCodes } from "http-status-codes";
+import path from "path";
+import { fileURLToPath } from "url";
 import {
   searchDocumentService,
   queryDocumentService,
   getDocumentMetaService,
+  assertOwnedDocument,
 } from "../service/rag.service.js";
 
 export const searchDocumentController = async (req, res, next) => {
@@ -81,5 +84,44 @@ export const getDocumentMetaController = async (req, res, next) => {
     });
   } catch (error) {
     next(error); // NotFoundError handled by error-handler.js
+  }
+};
+// needed for __dirname in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ... existing getDocumentMetaController above ...
+
+export const getDocumentFileController = async (req, res, next) => {
+  try {
+    const { documentId } = req.params;
+    const userId = req.user.id;
+
+    // 1. Verify ownership and get storage_path
+    const document = await assertOwnedDocument(Number(documentId), userId);
+
+    // 2. Resolve absolute path on disk
+    // storage_path is like "1/1234-abc.pdf"
+    // files are stored in backend/uploads/
+    const absolutePath = path.resolve(
+      __dirname,
+      "../../../../../uploads",
+      document.storage_path,
+    );
+
+    // 3. Stream the PDF back to the client
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${document.title}"`,
+    );
+
+    return res.sendFile(absolutePath, (err) => {
+      if (err) {
+        next(err);
+      }
+    });
+  } catch (error) {
+    next(error);
   }
 };
