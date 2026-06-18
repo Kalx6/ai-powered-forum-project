@@ -1,5 +1,12 @@
 import { safeExecute } from "../../../../db/config.js";
 import { GoogleGenAI } from "@google/genai";
+import { NotFoundError } from "../../../utils/errors/index.js";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -151,4 +158,118 @@ If the answer is not in the context, say "Not found in document".
     answer: response.text,
     sources: topChunks,
   };
+};
+
+// Suud's part
+
+export const getDocumentMetaService = async (documentId, userId) => {
+  // 1. Fetch document matching both documentId and userId
+  const rows = await safeExecute(
+    `SELECT
+      document_id,
+      title,
+      mime_type,
+      byte_size,
+      status,
+      error_message,
+      created_at,
+      updated_at,
+      user_id,
+      storage_path
+    FROM documents
+    WHERE document_id = ? AND user_id = ?
+    LIMIT 1`,
+    [documentId, userId],
+  );
+
+  // 2. Return 404 if not found or doesn't belong to user
+  if (!rows || rows.length === 0) {
+    throw new NotFoundError("Document not found");
+  }
+
+  // 3. Return the document record
+  return rows[0];
+};
+
+// add below getDocumentMetaService
+
+export const assertOwnedDocument = async (documentId, userId) => {
+  // Fetch document matching both documentId and userId
+  const rows = await safeExecute(
+    `SELECT
+      document_id,
+      storage_path,
+      title,
+      mime_type
+    FROM documents
+    WHERE document_id = ? AND user_id = ?
+    LIMIT 1`,
+    [documentId, userId],
+  );
+
+  // Return 404 if not found or doesn't belong to user
+  if (!rows || rows.length === 0) {
+    throw new NotFoundError("Document not found");
+  }
+
+  return rows[0]; // { document_id, storage_path, title, mime_type }
+};
+
+// add below assertOwnedDocument
+
+export const listDocumentsForUserService = async (userId) => {
+  // Fetch all documents belonging to this user, latest first
+  const rows = await safeExecute(
+    `SELECT
+      document_id,
+      title,
+      mime_type,
+      byte_size,
+      status,
+      error_message,
+      created_at,
+      updated_at
+    FROM documents
+    WHERE user_id = ?
+    ORDER BY created_at DESC`,
+    [userId],
+  );
+
+  // Return empty array if no documents found
+  return rows || [];
+};
+
+
+
+export const deleteDocumentService = async (documentId, userId) => {
+  // 1. Verify ownership — reuse assertOwnedDocument
+  const document = await assertOwnedDocument(documentId, userId);
+
+  // 2. Resolve absolute path of the PDF on disk
+  const absolutePath = path.resolve(
+    __dirname,
+    "../../../../../uploads",
+    document.storage_path,
+  );
+
+  // 3. Delete file from disk
+  // if file is already missing, don't throw — just continue
+  try {
+    await fs.unlink(absolutePath);
+  } catch (err) {
+    if (err.code !== "ENOENT") {
+      // ENOENT means file not found — that's ok
+      // any other error is a real problem
+      throw err;
+    }
+  }
+
+  // 4. Delete record from DB
+  // CASCADE will automatically delete related chunks and vectors
+  await safeExecute(
+    `DELETE FROM documents WHERE document_id = ? AND user_id = ?`,
+    [documentId, userId],
+  );
+
+  return { id: documentId };
 };
