@@ -1,5 +1,6 @@
 import { safeExecute } from "../../../../db/config.js";
 import { GoogleGenAI } from "@google/genai";
+import { NotFoundError } from "../../../utils/errors/index.js";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -151,4 +152,35 @@ If the answer is not in the context, say "Not found in document".
     answer: response.text,
     sources: topChunks,
   };
+};
+
+// Suud's part
+
+export const getDocumentMetaService = async (documentId, userId) => {
+  // 1. Fetch document matching both documentId and userId
+  const rows = await safeExecute(
+    `SELECT
+      document_id,
+      title,
+      mime_type,
+      byte_size,
+      status,
+      error_message,
+      created_at,
+      updated_at,
+      user_id,
+      storage_path
+    FROM documents
+    WHERE document_id = ? AND user_id = ?
+    LIMIT 1`,
+    [documentId, userId],
+  );
+
+  // 2. Return 404 if not found or doesn't belong to user
+  if (!rows || rows.length === 0) {
+    throw new NotFoundError("Document not found");
+  }
+
+  // 3. Return the document record
+  return rows[0];
 };

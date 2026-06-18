@@ -1,7 +1,11 @@
 import express from "express";
 import { authenticateUser } from "../../../middleware/authentication.js";
-import { searchDocumentController } from "../controller/rag.controller.js";
-import { queryDocumentController } from "../controller/rag.controller.js";
+import {
+  searchDocumentController,
+  queryDocumentController,
+  getDocumentMetaController,
+} from "../controller/rag.controller.js";
+import { documentIdParamValidation } from "../validations/rag.validation.js";
 
 const router = express.Router();
 
@@ -17,4 +21,12 @@ router.post(
   queryDocumentController,
 );
 
-export default router; // Hello, there
+// T-24 - Get Document Metadata
+router.get(
+  "/documents/:documentId",
+  authenticateUser,
+  documentIdParamValidation,
+  getDocumentMetaController,
+);
+
+export default router;
