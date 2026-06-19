@@ -1,6 +1,13 @@
+// backend/src/api/rag/routes/rag.routes.js
 import express from "express";
+import { Router } from "express";
+import {
+  ragUpload,
+  createDocumentMulterErrorHandler,
+} from "../config/rag.upload.config.js";
 import { authenticateUser } from "../../../middleware/authentication.js";
 import {
+  createDocumentController,
   searchDocumentController,
   queryDocumentController,
   getDocumentMetaController,
@@ -10,7 +17,17 @@ import {
 } from "../controller/rag.controller.js";
 import { documentIdParamValidation } from "../validations/rag.validation.js";
 
-const router = express.Router();
+
+const router = Router();
+
+
+router.post(
+  "/documents",
+  authenticateUser,
+  ragUpload.single("file"),
+  createDocumentMulterErrorHandler,
+  createDocumentController,
+  );
 
 router.get(
   "/documents/:documentId/search",
