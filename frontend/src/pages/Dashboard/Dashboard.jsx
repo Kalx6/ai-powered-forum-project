@@ -106,11 +106,16 @@ function StatCard({ label, value }) {
 
 /* ─── question row ────────────────────────────────────────────────────────── */
 function QuestionRow({ question, isOwn, onClick }) {
+  // Backend returns snake_case fields
+  const firstName = question.first_name || question.firstName || "";
+  const lastName = question.last_name || question.lastName || "";
   const initials =
-    (
-      (question.firstName?.[0] || "") + (question.lastName?.[0] || "")
-    ).toUpperCase() || "?";
-  const replyCount = question.answerCount ?? question.replyCount ?? 0;
+    ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "?";
+  const replyCount =
+    question.answer_count ?? question.answerCount ?? question.replyCount ?? 0;
+  const createdAt = question.created_at || question.createdAt;
+  const body = question.content || question.body || "";
+  const qHash = question.question_hash || question.questionHash || question.id;
 
   return (
     <article
@@ -139,9 +144,7 @@ function QuestionRow({ question, isOwn, onClick }) {
           <h3 className={styles.row__title}>{question.title}</h3>
           {isOwn && <span className={styles.row__ownBadge}>YOURS</span>}
         </div>
-        {question.body && (
-          <p className={styles.row__excerpt}>{excerpt(question.body)}</p>
-        )}
+        {body && <p className={styles.row__excerpt}>{excerpt(body)}</p>}
         <div className={styles.row__meta}>
           <span className={styles.row__replies}>
             <svg
@@ -158,8 +161,8 @@ function QuestionRow({ question, isOwn, onClick }) {
             {replyCount} {replyCount === 1 ? "reply" : "replies"}
           </span>
           <span className={styles.row__time}>
-            {timeAgo(question.createdAt)} by {question.firstName}{" "}
-            {question.lastName}
+            {timeAgo(createdAt)}
+            {(firstName || lastName) && ` by ${firstName} ${lastName}`.trim()}
           </span>
           {question.score != null && (
             <span className={styles.row__score}>
@@ -188,18 +191,22 @@ export default function Dashboard() {
   const isSearching = !!(urlQ || urlSemantic);
   const firstName = user?.firstName?.trim() || "";
 
-  /* derived stats */
+  /* derived stats — use snake_case fields from backend */
   const stats = {
     questions: questions.length,
     replies: questions.reduce(
-      (acc, q) => acc + (q.answerCount ?? q.replyCount ?? 0),
+      (acc, q) => acc + (q.answer_count ?? q.answerCount ?? q.replyCount ?? 0),
       0,
     ),
     unanswered: questions.filter(
-      (q) => (q.answerCount ?? q.replyCount ?? 0) === 0,
+      (q) => (q.answer_count ?? q.answerCount ?? q.replyCount ?? 0) === 0,
     ).length,
     yours: questions.filter(
-      (q) => q.userId === user?.userId || q.userId === user?.id,
+      (q) =>
+        q.user_id === user?.userId ||
+        q.user_id === user?.id ||
+        q.userId === user?.userId ||
+        q.userId === user?.id,
     ).length,
   };
 
@@ -216,7 +223,8 @@ export default function Dashboard() {
           limit: PAGE_SIZE,
         });
       }
-      setQuestions(data.questions ?? data.data ?? []);
+      // Backend returns { success, data: [...] }
+      setQuestions(data.data ?? data.questions ?? []);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load questions.");
     } finally {
@@ -302,6 +310,8 @@ export default function Dashboard() {
           />
         </div>
 
+        <hr />
+
         {/* Stats snapshot */}
         {isLoading ? (
           <p className={styles.hero__snapshotLoading}>
@@ -314,28 +324,11 @@ export default function Dashboard() {
                 Figures below describe the newest threads in this feed (up to{" "}
                 {PAGE_SIZE} from the API).
               </p>
-              <hr />
               <div className={styles.stats__grid}>
-                <StatCard
-                  label="Questions"
-                  value={stats.questions}
-                  className={styles.stats__grid_element}
-                />
-                <StatCard
-                  label="Replies"
-                  value={stats.replies}
-                  className={styles.stats__grid_element}
-                />
-                <StatCard
-                  label="Unanswered"
-                  value={stats.unanswered}
-                  className={styles.stats__grid_element}
-                />
-                <StatCard
-                  label="Yours"
-                  value={stats.yours}
-                  className={styles.stats__grid_element}
-                />
+                <StatCard label="Questions" value={stats.questions} />
+                <StatCard label="Replies" value={stats.replies} />
+                <StatCard label="Unanswered" value={stats.unanswered} />
+                <StatCard label="Yours" value={stats.yours} />
               </div>
             </div>
           )
@@ -401,7 +394,8 @@ export default function Dashboard() {
             !error &&
             questions.map((q) => {
               const qId = q.question_hash || q.questionHash || q.id;
-              const isOwn = q.userId === user?.userId || q.userId === user?.id;
+              const isOwn =
+                q.user_id === user?.userId || q.user_id === user?.id;
               return (
                 <QuestionRow
                   key={qId}
