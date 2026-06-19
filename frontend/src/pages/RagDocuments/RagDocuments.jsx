@@ -1,7 +1,7 @@
 /**
  * RagDocuments — /rag-documents
  * Private PDF library: upload, list, preview, semantic search, AI-grounded Q&A.
- *../../services/rag/rag.service
+ *
  * Layout: Library (left) + Reader/Search/Ask stacked sections (right).
  * Matches design: not a tab interface — all three sections render together
  * once a READY document is selected.
@@ -77,14 +77,14 @@ function DocumentRow({ doc, isSelected, onSelect, onDelete }) {
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}
     >
       <div className={styles.docRow__main}>
-        <p className={styles.docRow__name}>{doc.name || doc.filename || doc.title}</p>
+        <p className={styles.docRow__name}>{doc.title}</p>
         <StatusBadge status={doc.status} />
       </div>
       <button
         type="button"
         className={styles.docRow__delete}
         onClick={e => { e.stopPropagation(); onDelete(); }}
-        aria-label={`Delete ${doc.name || doc.filename}`}
+        aria-label={`Delete ${doc.title}`}
       >
         <TrashIcon />
       </button>
@@ -107,7 +107,7 @@ export default function RagDocuments() {
 
   /* selected doc state */
   const [selectedDocId, setSelectedDocId] = useState(null);
-  const selectedDoc = documents.find(d => (d.documentId ?? d.id) === selectedDocId) || null;
+  const selectedDoc = documents.find(d => d.document_id === selectedDocId) || null;
 
   /* preview state */
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -171,10 +171,10 @@ export default function RagDocuments() {
 
   /* ── delete ───────────────────────────────────────────────────────────────── */
   async function handleDelete(doc) {
-    const docId = doc.documentId ?? doc.id;
+    const docId = doc.document_id;
     try {
       await deleteDocument(docId);
-      setDocuments(prev => prev.filter(d => (d.documentId ?? d.id) !== docId));
+      setDocuments(prev => prev.filter(d => d.document_id !== docId));
       if (selectedDocId === docId) {
         setSelectedDocId(null);
       }
@@ -185,7 +185,7 @@ export default function RagDocuments() {
 
   /* ── select a document ───────────────────────────────────────────────────── */
   function handleSelectDoc(doc) {
-    const docId = doc.documentId ?? doc.id;
+    const docId = doc.document_id;
     setSelectedDocId(docId);
     setSearchQuery(''); setSearchResults(null); setSearchError(null);
     setAskQuery(''); setAskResult(null); setAskError(null);
@@ -198,7 +198,7 @@ export default function RagDocuments() {
       setPdfUrl(null);
       return;
     }
-    const docId = selectedDoc.documentId ?? selectedDoc.id;
+    const docId = selectedDoc.document_id;
     let objectUrl = null;
     let cancelled = false;
 
@@ -225,7 +225,7 @@ export default function RagDocuments() {
   /* ── search ───────────────────────────────────────────────────────────────── */
   async function handleSearch() {
     if (!searchQuery.trim() || !selectedDoc) return;
-    const docId = selectedDoc.documentId ?? selectedDoc.id;
+    const docId = selectedDoc.document_id;
     setIsSearching(true);
     setSearchError(null);
     setSearchResults(null);
@@ -242,7 +242,7 @@ export default function RagDocuments() {
   /* ── ask with AI ──────────────────────────────────────────────────────────── */
   async function handleAsk() {
     if (!askQuery.trim() || !selectedDoc) return;
-    const docId = selectedDoc.documentId ?? selectedDoc.id;
+    const docId = selectedDoc.document_id;
     setIsAsking(true);
     setAskError(null);
     setAskResult(null);
@@ -325,7 +325,7 @@ export default function RagDocuments() {
           {!isLoadingList && documents.length > 0 && (
             <div className={styles.docList}>
               {documents.map(doc => {
-                const docId = doc.documentId ?? doc.id;
+                const docId = doc.document_id;
                 return (
                   <DocumentRow
                     key={docId}
