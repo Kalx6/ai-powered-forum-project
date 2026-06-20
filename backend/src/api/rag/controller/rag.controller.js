@@ -135,7 +135,7 @@ export const getDocumentFileController = async (req, res, next) => {
     // files are stored in backend/uploads/
     const absolutePath = path.resolve(
       __dirname,
-      "../../../../../uploads",
+      "../../../../uploads/rag",
       document.storage_path,
     );
 
@@ -146,7 +146,7 @@ export const getDocumentFileController = async (req, res, next) => {
       `inline; filename="${document.title}"`,
     );
 
-    return res.sendFile(absolutePath, (err) => {
+    return res.sendFile(absolutePath, {}, (err) => {
       if (err) {
         next(err);
       }

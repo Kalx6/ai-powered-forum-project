@@ -1,23 +1,14 @@
 // backend/src/api/rag/service/rag.service.js
-import fs from "fs";
-import path from "path";
 import { PDFParse } from "pdf-parse";
 import { GoogleGenAI } from "@google/genai";
 import { db, safeExecute } from "../../../../db/config.js";
-
-
-
-
-import { safeExecute } from "../../../../db/config.js";
-import { GoogleGenAI } from "@google/genai";
 import { NotFoundError } from "../../../utils/errors/index.js";
-import fs from "fs/promises";
+import fs from "fs";
+import fsPromises from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
-
-
-/ ── Constants from env ────────────────────────
+// ── Constants from env ────────────────────────
 const EMBEDDING_MODEL =
   process.env.GEMINI_EMBEDDING_MODEL || "gemini-embedding-001";
 const CHUNK_CHARS = parseInt(process.env.RAG_CHUNK_CHARS, 10) || 900;
@@ -31,7 +22,6 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 // Generate Embedding
 const generateEmbedding = async (text) => {
   const result = await ai.models.embedContent({
@@ -41,8 +31,6 @@ const generateEmbedding = async (text) => {
 
   return result.embeddings[0].values;
 };
-
-
 
 function chunkText(text) {
   const chunks = [];
@@ -64,7 +52,6 @@ function chunkText(text) {
   return chunks;
 }
 
-
 async function embedChunk(text) {
   const response = await ai.models.embedContent({
     model: EMBEDDING_MODEL,
@@ -80,7 +67,7 @@ async function insertDocument(userId, file) {
 
   // storage_path is relative: userId/filename
   // This makes the path portable across machines
-  const storagePath = path.join(String(userId), path.basename(file.path));
+  const storagePath = path.basename(file.path);
 
   const result = await safeExecute(
     `INSERT INTO documents
@@ -91,7 +78,6 @@ async function insertDocument(userId, file) {
 
   return result.insertId;
 }
-
 
 async function checkUserDocumentLimit(userId) {
   const rows = await safeExecute(
@@ -111,7 +97,6 @@ async function checkUserDocumentLimit(userId) {
   }
 }
 
-
 async function updateDocumentStatus(documentId, status, errorMessage = null) {
   await safeExecute(
     `UPDATE documents
@@ -129,7 +114,6 @@ async function fetchDocument(documentId) {
   return rows[0];
 }
 
-
 export async function createDocumentFromUploadService({ userId, file }) {
   // Step 1 — check document limit before doing anything
   await checkUserDocumentLimit(userId);
@@ -138,7 +122,6 @@ export async function createDocumentFromUploadService({ userId, file }) {
   const documentId = await insertDocument(userId, file);
 
   try {
-
     const fileBuffer = fs.readFileSync(file.path);
 
     const parser = new PDFParse({ data: fileBuffer });
@@ -161,7 +144,6 @@ export async function createDocumentFromUploadService({ userId, file }) {
       throw new Error("No text chunks could be extracted from this PDF.");
     }
 
-   
     for (let i = 0; i < chunks.length; i++) {
       const chunkContent = chunks[i];
 
@@ -190,16 +172,8 @@ export async function createDocumentFromUploadService({ userId, file }) {
     // Step 7 — mark document as ready
     await updateDocumentStatus(documentId, "ready");
   } catch (err) {
-   
     await updateDocumentStatus(documentId, "failed", err.message);
     throw err;
-  } finally {
-   
-    try {
-      fs.unlinkSync(file.path);
-    } catch (_) {
-      // file already gone — not a problem
-    }
   }
 
   // Step 8 — return the full document record
@@ -255,7 +229,7 @@ export const searchDocumentService = async ({
 
   // 3. Score each chunk
   const ranked = rows.map((row) => {
-    const score = cosineSimilarity(queryEmbedding, JSON.parse(row.embedding));
+    const score = cosineSimilarity(queryEmbedding, row.embedding);
 
     return {
       chunkId: row.chunk_id,
@@ -297,7 +271,7 @@ export const queryDocumentService = async ({ documentId, query, userId }) => {
 
   // 3. Rank chunks
   const ranked = rows.map((row) => {
-    const score = cosineSimilarity(queryEmbedding, JSON.parse(row.embedding));
+    const score = cosineSimilarity(queryEmbedding, row.embedding);
 
     return {
       content: row.content,
@@ -419,8 +393,6 @@ export const listDocumentsForUserService = async (userId) => {
   return rows || [];
 };
 
-
-
 export const deleteDocumentService = async (documentId, userId) => {
   // 1. Verify ownership — reuse assertOwnedDocument
   const document = await assertOwnedDocument(documentId, userId);
@@ -433,10 +405,9 @@ export const deleteDocumentService = async (documentId, userId) => {
   );
 
   // 3. Delete file from disk
-  // if file is alrea
-  dy missing, don't throw — just continue
+  // if file is already missing, don't throw — just continue
   try {
-    await fs.unlink(absolutePath);
+    await fsPromises.unlink(absolutePath);
   } catch (err) {
     if (err.code !== "ENOENT") {
       // ENOENT means file not found — that's ok
