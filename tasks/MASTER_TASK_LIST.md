@@ -204,3 +204,39 @@ _Adds Google sign-in, self-service password recovery, a modern responsive profil
 - **Task Name**: Live Notification Bell (`T-29`)
   - **Description**: Build a notification bell icon with an unread-count badge, a dropdown panel listing notification history, and a live Socket.io connection that updates the badge instantly when a new notification arrives.
   - **Reference**: `/notifications/notification-bell-ui.md`
+
+  ## Milestone 5: AI Forum Intelligence
+_Advanced AI features that turn the forum itself into a knowledge base — chat with the forum, summarize long discussions, auto-moderate new content, and surface the best answer automatically._
+### Backend Tasks
+- **Task Name**: Forum Post Embedding Pipeline (`T-30`)
+  - **Description**: Implement a background ingestion process that chunks every question and answer, generates vector embeddings via Gemini, and stores them so the entire forum becomes searchable the same way an uploaded RAG document is.
+  - **Reference**: `/ai-forum/embedding-pipeline.md`
+- **Task Name**: RAG Forum Chatbot Query (`T-30`)
+  - **Description**: Implement `POST /api/forum-chat/query` to embed a user's natural-language question, run a similarity search across all forum post vectors, and generate a Gemini answer with citations back to the source posts.
+  - **Reference**: `/ai-forum/forum-chatbot-query.md`
+- **Task Name**: AI Answer Summarizer (`T-31`)
+  - **Description**: Implement `GET /api/questions/:questionHash/answer-summary` to send all answers for a question to Gemini and return a short bulleted summary of the key points and consensus.
+  - **Reference**: `/ai-forum/answer-summarizer.md`
+- **Task Name**: AI Content Moderation Check (`T-32`)
+  - **Description**: Implement `POST /api/moderation/check` to scan a new question or answer for spam, toxic language, and duplicate content using Gemini, returning a flag status and reason.
+  - **Reference**: `/ai-forum/moderation-check.md`
+- **Task Name**: Moderation Review Queue (`T-32`)
+  - **Description**: Implement `GET /api/moderation/queue` and `PATCH /api/moderation/:itemId/resolve` to list flagged content for a moderator and approve or remove it, backed by a new `moderation_status` column.
+  - **Reference**: `/ai-forum/moderation-queue.md`
+- **Task Name**: AI Accepted Answer Recommendation (`T-33`)
+  - **Description**: Implement `GET /api/questions/:questionHash/recommend-answer` to have Gemini evaluate all answers together against correctness, upvotes, and completeness, returning a recommended answer ID with a confidence score and reasoning.
+  - **Reference**: `/ai-forum/recommend-answer.md`
+### Frontend Tasks
+- **Task Name**: Forum AI Chatbot Widget (`T-30`)
+  - **Description**: Build a floating chat widget accessible from any page that sends user questions to `/api/forum-chat/query` and renders the AI's answer with clickable citation links back to the original forum posts.
+  - **Reference**: `/ai-forum/forum-chatbot-ui.md`
+- **Task Name**: Answer Discussion Summary Panel (`T-31`)
+  - **Description**: Add a collapsible "Discussion Summary" panel above the answers list on the question detail page, populated from `/answer-summary`, shown only when a question has more than a set number of answers.
+  - **Reference**: `/ai-forum/answer-summary-ui.md`
+- **Task Name**: Moderation Review Dashboard (`T-32`)
+  - **Description**: Build an admin-only `/moderation` page listing flagged questions and answers with their AI-given reason, and Approve/Remove actions wired to the moderation queue endpoints.
+  - **Reference**: `/ai-forum/moderation-dashboard-ui.md`
+- **Task Name**: Recommended Answer Badge (`T-33`)
+  - **Description**: Display a "Recommended Answer" badge with confidence percentage above the AI-selected answer on the question detail page, with a tooltip explaining the reasoning behind the recommendation.
+  - **Reference**: `/ai-forum/recommended-answer-ui.md`
+
