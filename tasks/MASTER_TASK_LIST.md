@@ -157,3 +157,50 @@ _Advanced AI feature allowing users to upload PDFs, perform semantic searches wi
 - **Task Name**: RAG Documents Page (`T-24` & `T-25`)
   - **Description**: Build the `/rag-documents` page featuring a document list sidebar, PDF upload dropzone, and a 3-tab active view interface (Ask AI, Semantic Search, PDF Preview).
   - **Reference**: `/rag-documents/task-rag-documents.md`
+
+  
+
+
+## Milestone 4: Account & Engagement Upgrade
+_Adds Google sign-in, self-service password recovery, a modern responsive profile menu, user-controlled appearance settings, and real-time notifications when a user's question is answered._
+### Backend Tasks
+- **Task Name**: Google Sign-In & Sign-Up (`T-25`)
+  - **Description**: Implement `POST /api/auth/google` to verify a Google ID token, create or link a user account, and return our own JWT, allowing sign-in and sign-up via "Continue with Google."
+  - **Reference**: `/auth/google-signin.md`
+- **Task Name**: Request Password Reset Code (`T-26`)
+  - **Description**: Implement `POST /api/auth/forgot-password` to generate a 6-digit verification code, store it hashed with an expiry, and email it to the user.
+  - **Reference**: `/auth/forgot-password.md`
+- **Task Name**: Verify Password Reset Code (`T-26`)
+  - **Description**: Implement `POST /api/auth/verify-reset-code` to validate the submitted code against the stored hash and expiry, returning a short-lived reset token on success.
+  - **Reference**: `/auth/verify-reset-code.md`
+- **Task Name**: Reset Password (`T-26`)
+  - **Description**: Implement `POST /api/auth/reset-password` to validate the reset token and update the user's password hash in the database.
+  - **Reference**: `/auth/reset-password.md`
+- **Task Name**: Update User Settings (`T-28`)
+  - **Description**: Implement `PATCH /api/users/settings` to persist a user's theme preference (light or dark) to their account.
+  - **Reference**: `/users/update-settings.md`
+- **Task Name**: List Notifications (`T-29`)
+  - **Description**: Implement `GET /api/notifications` to fetch the authenticated user's notification history, most recent first.
+  - **Reference**: `/notifications/list-notifications.md`
+- **Task Name**: Mark Notification as Read (`T-29`)
+  - **Description**: Implement `PATCH /api/notifications/:notificationId/read` to mark a single notification as read for the authenticated user.
+  - **Reference**: `/notifications/mark-notification-read.md`
+- **Task Name**: Real-Time Notification Delivery (`T-29`)
+  - **Description**: Set up a Socket.io server attached to the existing HTTP server, authenticate socket connections via JWT, and emit a `notification:new` event the instant an answer is posted to a user's question.
+  - **Reference**: `/notifications/realtime-delivery.md`
+### Frontend Tasks
+- **Task Name**: Google Sign-In Button (`T-25`)
+  - **Description**: Add "Continue with Google" to the sign-in and sign-up pages using `@react-oauth/google`, sending the returned credential to the backend and handling the login response the same way as the existing email/password flow.
+  - **Reference**: `/auth/google-signin-ui.md`
+- **Task Name**: Forgot Password Flow (`T-26`)
+  - **Description**: Build the three-screen forgot password flow — enter email, enter verification code, set new password — wired to the three backend endpoints in sequence.
+  - **Reference**: `/auth/forgot-password-ui.md`
+- **Task Name**: Responsive Profile Menu (`T-27`)
+  - **Description**: Build a header avatar dropdown showing the user's name, email, a Settings link, and Sign Out, collapsing into a full-width slide-down panel on mobile screens.
+  - **Reference**: `/profile/profile-menu.md`
+- **Task Name**: Settings Page & Theme Toggle (`T-28`)
+  - **Description**: Build the `/settings` page with a light/dark mode toggle, backed by a `ThemeContext` that applies the theme instantly and persists the choice to the user's account.
+  - **Reference**: `/settings/theme-toggle.md`
+- **Task Name**: Live Notification Bell (`T-29`)
+  - **Description**: Build a notification bell icon with an unread-count badge, a dropdown panel listing notification history, and a live Socket.io connection that updates the badge instantly when a new notification arrives.
+  - **Reference**: `/notifications/notification-bell-ui.md`
