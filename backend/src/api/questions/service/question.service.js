@@ -69,8 +69,8 @@ export const listQuestionsService = async ({ search, mine, userId }) => {
   if (search) {
     sql += `
       AND (
-        title LIKE ?
-        OR content LIKE ?
+        q.title LIKE ?
+        OR q.content LIKE ?
       )
     `;
 
@@ -84,7 +84,7 @@ export const listQuestionsService = async ({ search, mine, userId }) => {
     params.push(userId);
   }
 
-  sql += ` ORDER BY created_at DESC`;
+  sql += ` ORDER BY q.created_at DESC`;
 
   const questions = await safeExecute(sql, params);
 
