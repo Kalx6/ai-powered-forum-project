@@ -6,7 +6,6 @@ import { ChatInput } from "./ChatInput";
 import "./ChatWidget.css";
 
 export const ChatWidget = () => {
-  console.log("✅ ChatWidget is rendering!");
   const { isOpen, setIsOpen, messages, clearMessages } = useForumChat();
   const { isLoading, error, sendQuery } = useAIChat();
   const messagesEndRef = useRef(null);
