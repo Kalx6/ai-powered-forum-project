@@ -3,6 +3,7 @@ import authRoutes from "./auth/routes/auth.routes.js";
 import questionRoutes from "./questions/routes/question.routes.js";
 import answerRoutes from "./answers/routes/answer.routes.js";
 import ragRoutes from "./rag/routes/rag.routes.js";
+import forumChatRoutes from "./forum-chat/routes/forum-chat.routes.js";
 
 export const mainRouter = express.Router();
 
@@ -18,4 +19,6 @@ mainRouter.use("/answers", answerRoutes);
 //Rag routes
 mainRouter.use("/rag", ragRoutes);
 
+// Chat routes
 
+mainRouter.use("/forum-chat", forumChatRoutes);
