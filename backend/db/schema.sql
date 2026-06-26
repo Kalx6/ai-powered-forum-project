@@ -134,4 +134,27 @@ CREATE TABLE `document_chunk_vectors` (
     UNIQUE KEY `uniq_chunk_vectors_chunk_id` (`chunk_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+-- -----------------------------------------------------------------------------
+-- 6. Forum Post Vectors Table
+-- Stores embeddings for BOTH questions and answers, used by the
+-- AI Forum Chatbot (T-30) for retrieval-augmented generation across
+-- the entire forum knowledge base.
+-- -----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `forum_post_vectors`;
+CREATE TABLE `forum_post_vectors` (
+    `vector_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `post_type` VARCHAR(10) NOT NULL,   -- 'question' or 'answer'
+    `post_id` INT NOT NULL,             -- question_id or answer_id depending on post_type
+    `source_text` TEXT NOT NULL,        -- text used to generate the embedding
+    `embedding` JSON NOT NULL,
+    `status` VARCHAR(20) DEFAULT 'ready', -- 'ready', 'pending', 'failed'
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY `uniq_forum_post_vectors_post` (`post_type`, `post_id`),
+    INDEX `idx_forum_post_vectors_post_type` (`post_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
+
+
