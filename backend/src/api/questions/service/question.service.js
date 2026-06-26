@@ -5,6 +5,7 @@ import {
   generateQuestionEmbedding,
   storeQuestionVector,
 } from "./vector.service.js";
+import { embedForumPost } from "../../forum-chat/service/forum-post-vector.helper.js";
 
 const generateQuestionHash = () => crypto.randomBytes(8).toString("hex");
 
@@ -37,6 +38,10 @@ export const createQuestionService = async ({ title, content, userId }) => {
       status: "failed",
     });
   }
+
+  // send the question to chatbot knowledge base
+
+  await embedForumPost("question", questionId, `${title}\n\n${content}`);
 
   return {
     id: questionId,

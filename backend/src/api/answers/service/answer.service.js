@@ -1,7 +1,7 @@
 // backend/src/api/answers/answer.service.js
 import { safeExecute } from "../../../../db/config.js";
 import { NotFoundError, BadRequestError } from "../../../utils/errors/index.js";
-
+import { embedForumPost } from "../../forum-chat/service/forum-post-vector.helper.js";
 // ─────────────────────────────────────────────
 // fetchQuestionOwner(questionId)
 // ─────────────────────────────────────────────
@@ -83,6 +83,10 @@ async function createAnswerService({ questionId, userId, content }) {
 
   // Step 4 — fetch the full answer details
   const answer = await fetchAnswerById(answerId);
+
+  // send the the answer to chatbot knowledge base
+
+  embedForumPost("answer", answerId, content);
 
   // Step 5 — shape the response
   return {
