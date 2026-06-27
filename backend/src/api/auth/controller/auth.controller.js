@@ -90,6 +90,7 @@ export const forgotPasswordController = async (req, res, next) => {
 // ── Verify Reset Code ─────────────────────────────────────────────────────
 
 export const verifyResetCodeController = async (req, res, next) => {
+  console.log("verifyResetCodeController called with body:", req.body);
   try {
     const { email, code } = req.body;
     const resetToken = await verifyResetCodeService(email, code);
