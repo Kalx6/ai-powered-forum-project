@@ -138,14 +138,14 @@ export default function Auth() {
           <header className={styles.auth__infoHeader}>
             <div
               className={styles.auth__infoBranding}
-              onClick={() => navigate('/')}
-              title='Go to Home'
-              role='button'
+              onClick={() => navigate("/")}
+              title="Go to Home"
+              role="button"
               tabIndex={0}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  navigate('/');
+                  navigate("/");
                 }
               }}
             >
@@ -202,13 +202,13 @@ export default function Auth() {
           <div className={styles.auth__infoFooter}>
             <div className={styles.auth__infoFooterContent}>
               <div className={styles.auth__infoAvatars}>
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <img
                     key={i}
                     src={`https://picsum.photos/seed/${i + 50}/100/100`}
                     className={styles.auth__infoAvatar}
-                    alt='u'
-                    referrerPolicy='no-referrer'
+                    alt="u"
+                    referrerPolicy="no-referrer"
                   />
                 ))}
               </div>
@@ -223,9 +223,9 @@ export default function Auth() {
       {/* Right: Auth Forms */}
       <section className={styles.auth__formSection}>
         <div className={styles.auth__formContainer}>
-          <AnimatePresence mode='wait'>
+          <AnimatePresence mode="wait">
             <Motion.div
-              key={isLogin ? 'login' : 'register'}
+              key={isLogin ? "login" : "register"}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -233,12 +233,12 @@ export default function Auth() {
             >
               <div className={styles.auth__formHeader}>
                 <h2 className={styles.auth__formTitle}>
-                  {isLogin ? 'Sign in to your account' : 'Create an account'}
+                  {isLogin ? "Sign in to your account" : "Create an account"}
                 </h2>
                 <p className={styles.auth__formSubtitle}>
                   {isLogin
-                    ? 'Enter your email address and password to continue.'
-                    : 'Complete the form below to create your account.'}
+                    ? "Enter your email address and password to continue."
+                    : "Complete the form below to create your account."}
                 </p>
               </div>
 
@@ -246,70 +246,79 @@ export default function Auth() {
                 {!isLogin && (
                   <>
                     <div className={styles.auth__inputGroup}>
-                      <label htmlFor='firstName' className={styles.auth__label}>
+                      <label htmlFor="firstName" className={styles.auth__label}>
                         First Name
                       </label>
                       <input
-                        id='firstName'
-                        type='text'
-                        placeholder='First name'
+                        id="firstName"
+                        type="text"
+                        placeholder="First name"
                         className={styles.auth__input}
                         value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
+                        onChange={(e) => setFirstName(e.target.value)}
                       />
                     </div>
 
                     <div className={styles.auth__inputGroup}>
-                      <label htmlFor='lastName' className={styles.auth__label}>
+                      <label htmlFor="lastName" className={styles.auth__label}>
                         Last Name
                       </label>
                       <input
-                        id='lastName'
-                        type='text'
-                        placeholder='Last name'
+                        id="lastName"
+                        type="text"
+                        placeholder="Last name"
                         className={styles.auth__input}
                         value={lastName}
-                        onChange={e => setLastName(e.target.value)}
+                        onChange={(e) => setLastName(e.target.value)}
                       />
                     </div>
                   </>
                 )}
 
                 <div className={styles.auth__inputGroup}>
-                  <label htmlFor='email' className={styles.auth__label}>
+                  <label htmlFor="email" className={styles.auth__label}>
                     Email Address
                   </label>
                   <input
-                    id='email'
-                    type='email'
-                    placeholder='Enter your email address'
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email address"
                     className={styles.auth__input}
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
                 <div className={styles.auth__inputGroup}>
                   <div className={styles.auth__labelRow}>
-                    <label htmlFor='password' className={styles.auth__label}>
+                    <label htmlFor="password" className={styles.auth__label}>
                       Password
                     </label>
+                    {isLogin && (
+                      <button
+                        type="button"
+                        className={styles.auth__labelLink}
+                        onClick={() => navigate("/forgot-password")}
+                      >
+                        Forgot password?
+                      </button>
+                    )}
                   </div>
                   <div className={styles.auth__passwordWrap}>
                     <input
-                      id='password'
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder='••••••••'
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
                       className={`${styles.auth__input} ${styles.auth__inputPassword}`}
                       value={password}
-                      onChange={e => setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <button
-                      type='button'
+                      type="button"
                       className={styles.auth__passwordToggle}
-                      onClick={() => setShowPassword(v => !v)}
+                      onClick={() => setShowPassword((v) => !v)}
                       aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
+                        showPassword ? "Hide password" : "Show password"
                       }
                       aria-pressed={showPassword}
                     >
@@ -330,15 +339,15 @@ export default function Auth() {
 
                 <div className={styles.auth__buttonContainer}>
                   <button
-                    type='submit'
-                    className={`${styles.auth__button} ${styles['auth__button--primary']}`}
+                    type="submit"
+                    className={`${styles.auth__button} ${styles["auth__button--primary"]}`}
                     disabled={loading}
                   >
                     {loading
-                      ? 'Processing...'
+                      ? "Processing..."
                       : isLogin
-                      ? 'Sign In'
-                      : 'Create Account'}
+                        ? "Sign In"
+                        : "Create Account"}
                     {!loading && (
                       <ArrowRight
                         size={16}
@@ -362,12 +371,12 @@ export default function Auth() {
                 <p className={styles.auth__formFooterText}>
                   {isLogin
                     ? "Don't have an account?"
-                    : 'Already have an account?'}
+                    : "Already have an account?"}
                   <button
                     onClick={() => setIsLogin(!isLogin)}
                     className={styles.auth__formFooterLink}
                   >
-                    {isLogin ? 'Create an account' : 'Back to sign in'}
+                    {isLogin ? "Create an account" : "Back to sign in"}
                   </button>
                 </p>
               </footer>

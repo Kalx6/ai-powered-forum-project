@@ -15,6 +15,8 @@ import PostQuestion from "./pages/PostQuestion/PostQuestion";
 import QuestionDetail from "./pages/QuestionDetail/QuestionDetail";
 import MyQuestions from "./pages/MyQuestions/MyQuestions";
 import RagDocuments from "./pages/RagDocuments/RagDocuments";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+
 
 function App() {
   return (
@@ -24,7 +26,7 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
-
+          <Route path="/forgot-password" element={<ForgotPassword />} />;
           {/* Protected routes with Layout */}
           <Route element={<Layout />}>
             <Route
@@ -68,7 +70,6 @@ function App() {
               }
             />
           </Route>
-
           {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

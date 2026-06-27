@@ -100,6 +100,24 @@ function handleAuthError(error) {
   }
 }
 
+// forgot password
+
+export async function forgotPassword(email) {
+  await apiClient.post("/api/auth/forgot-password", { email });
+}
+
+export async function verifyResetCode(email, code) {
+  const { data } = await apiClient.post("/api/auth/verify-reset-code", {
+    email,
+    code,
+  });
+  return data.data.resetToken;
+}
+
+export async function resetPassword(resetToken, newPassword) {
+  await apiClient.post("/api/auth/reset-password", { resetToken, newPassword });
+}
+
 /**
  * Service for handling auth-related requests.
  */
