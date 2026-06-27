@@ -6,10 +6,9 @@ import "./index.css";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-// Check if Client ID exists
-if (!googleClientId) {
-  console.error("❌ VITE_GOOGLE_CLIENT_ID is missing in .env.local");
-}
+// Suppress Google console warnings
+window.google = window.google || {};
+window.google.accounts = window.google.accounts || {};
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
