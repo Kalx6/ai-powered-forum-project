@@ -295,13 +295,13 @@ export default function Auth() {
                       Password
                     </label>
                     {isLogin && (
-                      <button
+                      <a
                         type="button"
                         className={styles.auth__labelLink}
                         onClick={() => navigate("/forgot-password")}
                       >
                         Forgot password?
-                      </button>
+                      </a>
                     )}
                   </div>
                   <div className={styles.auth__passwordWrap}>
