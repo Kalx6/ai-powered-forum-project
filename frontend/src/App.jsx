@@ -6,6 +6,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ForumChatbotProvider } from "./components/AI-Forum/ForumChatbotProvider.jsx";
 import Layout from "./components/Layout/Layout";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import Auth from "./pages/Auth/Auth";
@@ -18,10 +19,12 @@ import RagDocuments from "./pages/RagDocuments/RagDocuments";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 
 
+import ModerationPage from "./pages/Moderation/ModerationPage";
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+    <ForumChatbotProvider>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
@@ -73,6 +76,7 @@ function App() {
           {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </ForumChatbotProvider>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -10,9 +10,12 @@ import {
 import {
   registerValidation,
   loginValidation,
+  validateGoogleAuth, 
 } from "../validations/auth.validation.js";
 import { authenticateUser } from "../../../middleware/authentication.js";
-const router = express.Router();
+import googleRoutes from "./google.routes.js";
+
+const router = express.Router(); 
 
 /**
  * @route POST /api/auth/register
@@ -33,4 +36,7 @@ router.post("/logout", authenticateUser, logoutController);
 router.post("/forgot-password", forgotPasswordController);
 router.post("/verify-reset-code", verifyResetCodeController);
 router.post("/reset-password", resetPasswordController);
+// Google OAuth routes
+router.use("/google", googleRoutes); 
+
 export default router;

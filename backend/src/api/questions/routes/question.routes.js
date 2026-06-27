@@ -22,7 +22,10 @@ import {
   generateQuestionDraftCoachController,
   searchQuestionsSemanticController,
   getSimilarQuestionsController,
+  recommendAnswerController,
 } from "../controller/question.controller.js";
+import { generateAnswerSummaryController } from "../controller/summarizer.controller.js";
+
 const router = Router();
 
 // ── T-11: Semantic Search ─────────────────────
@@ -45,6 +48,14 @@ router.get(
   similarQuestionsValidation,
   validationErrorHandler,
   getSimilarQuestionsController,
+);
+
+// GET /api/questions/:questionHash/recommend-answer
+router.get(
+  "/:questionHash/recommend-answer",
+  authenticateUser,
+  validateQuestionHash,
+  recommendAnswerController,
 );
 
 // ── Zaida ───────────────────────────
@@ -77,6 +88,13 @@ router.post(
   validateQuestionHash, // 2. validate :questionHash param
   validateAnswerFitBody, // 3. validate request body
   assessAnswerAgainstQuestionController, // 4. handle request
+);
+
+// NEW: Answer summarizer route
+router.get(
+  "/:questionHash/answer-summary",
+  validateQuestionHash,
+  generateAnswerSummaryController,
 );
 
 export default router;

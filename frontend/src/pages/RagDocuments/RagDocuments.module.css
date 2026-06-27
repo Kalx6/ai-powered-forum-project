@@ -49,15 +49,15 @@
   background: #FEE2E2;
   border-radius: var(--radius-md, var(--border-radius-md));
   font-size: var(--text-sm, 0.875rem);
-  color: #B91C1C;
-  border: 0.5px solid #FECACA;
+  color: #ff7b7b;
+  border: 0.5px solid #ffb0b0;
 }
 
 @media (prefers-color-scheme: dark) {
   .listErrorBanner {
-    background: #450A0A;
-    border-color: #7F1D1D;
-    color: #FCA5A5;
+    background: #FEE2E2;
+    border-color: rgb(255, 174, 174);
+    color: #f98b8b;
   }
 }
 
@@ -290,9 +290,9 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .badgeReady { background: #14532D; color: #86EFAC; }
-  .badgeProcessing { background: #451A03; color: #FCD34D; }
-  .badgeFailed { background: #450A0A; color: #FCA5A5; }
+  .badgeReady { background: #ff7a37; color: #ffffff; }
+  .badgeProcessing { background: #ff762c; color: #ffffff; }
+  .badgeFailed { background: #FEE2E2; color: #ff8080; }
 }
 
 /* ─── workspace (right column) ────────────────────────────────────────────── */
@@ -440,7 +440,7 @@
   background: #FEE2E2;
   border-radius: var(--radius-md, var(--border-radius-md));
   font-size: 0.8125rem;
-  color: #B91C1C;
+  color: #fa6b6b;
   margin: 0;
 }
 

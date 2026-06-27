@@ -14,12 +14,17 @@ CREATE TABLE `users` (
     `last_name` VARCHAR(50) NOT NULL,
     `email` VARCHAR(320) NOT NULL UNIQUE,
     `password_hash` VARCHAR(255) NOT NULL,
+    `role` VARCHAR(20) DEFAULT 'user',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CHECK (`email` = LOWER(`email`)),
     
     INDEX `idx_users_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- Add column table already exists
+ALTER TABLE users ADD COLUMN google_id VARCHAR(255) UNIQUE NULL;
 
 -- -----------------------------------------------------------------------------
 -- 2. Questions Table
@@ -33,6 +38,8 @@ CREATE TABLE `questions` (
     `user_id` INT NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `content` TEXT NOT NULL, -- Detailed content including code sections
+    `moderation_status` VARCHAR(50) NOT NULL DEFAULT 'approved',
+    `moderation_reason` TEXT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CHECK (CHAR_LENGTH(`title`) >= 5),
@@ -74,6 +81,8 @@ CREATE TABLE `answers` (
     `question_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `content` TEXT NOT NULL, -- Content including code sections
+    `moderation_reason` TEXT NULL,
+    `moderation_status` ENUM('pending', 'approved', 'removed') DEFAULT 'pending',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
@@ -146,4 +155,26 @@ CREATE TABLE password_resets (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+-- -----------------------------------------------------------------------------
+-- 6. Forum Post Vectors Table
+-- Stores embeddings for BOTH questions and answers, used by the
+-- AI Forum Chatbot (T-30) for retrieval-augmented generation across
+-- the entire forum knowledge base.
+-- -----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `forum_post_vectors`;
+CREATE TABLE `forum_post_vectors` (
+    `vector_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `post_type` VARCHAR(10) NOT NULL,   -- 'question' or 'answer'
+    `post_id` INT NOT NULL,             -- question_id or answer_id depending on post_type
+    `source_text` TEXT NOT NULL,        -- text used to generate the embedding
+    `embedding` JSON NOT NULL,
+    `status` VARCHAR(20) DEFAULT 'ready', -- 'ready', 'pending', 'failed'
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY `uniq_forum_post_vectors_post` (`post_type`, `post_id`),
+    INDEX `idx_forum_post_vectors_post_type` (`post_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
+
+

@@ -1,10 +1,10 @@
 /**
  * Auth: combined login + register form; switches mode without changing routes.
  */
-import { useState } from 'react';
+import { useState } from "react";
 
-import { motion as Motion, AnimatePresence } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { motion as Motion, AnimatePresence } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sparkles,
   Code,
@@ -12,21 +12,27 @@ import {
   Eye,
   EyeOff,
   MessageSquare,
-} from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import styles from './Auth.module.css';
+} from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { GoogleSignInButton } from "../../components/Auth/GoogleSignInButton/GoogleSignInButton";
+import styles from "./Auth.module.css";
 
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   const { register, login } = useAuth();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(() =>
+    new URLSearchParams(location.search).get("mode") === "signup"
+      ? false
+      : true,
+  );
 
   // Registration form state
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   // Error and loading state
@@ -35,7 +41,7 @@ export default function Auth() {
   const [successMessage, setSuccessMessage] = useState(null);
 
   // Handle form submission for both login and registration
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
@@ -44,17 +50,17 @@ export default function Auth() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!normalizedEmail) {
-      setError('Email is required.');
+      setError("Email is required.");
       return;
     }
 
     if (!emailPattern.test(normalizedEmail)) {
-      setError('Please enter a valid email address.');
+      setError("Please enter a valid email address.");
       return;
     }
 
     if (!password.trim()) {
-      setError('Password is required.');
+      setError("Password is required.");
       return;
     }
 
@@ -63,23 +69,27 @@ export default function Auth() {
 
     if (!isLogin) {
       if (!trimmedFirstName) {
-        setError('First name is required.');
+        setError("First name is required.");
         return;
       }
       if (trimmedFirstName.length < 3) {
-        setError('First name must be at least 3 characters long.');
+        setError("First name must be at least 3 characters long.");
         return;
       }
       if (!trimmedLastName) {
-        setError('Last name is required.');
+        setError("Last name is required.");
         return;
       }
       if (trimmedLastName.length < 3) {
-        setError('Last name must be at least 3 characters long.');
+        setError("Last name must be at least 3 characters long.");
         return;
       }
-      if (password.length < 6) {
-        setError('Password must be at least 6 characters long.');
+      if (password.length < 8) {
+        setError("Password must be at least 8 characters long.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
         return;
       }
     }
@@ -90,18 +100,17 @@ export default function Auth() {
       if (isLogin) {
         // Login flow
         await login({ email: normalizedEmail, password });
-        setSuccessMessage('Sign-in successful. Redirecting...');
+        setSuccessMessage("Sign-in successful. Redirecting...");
         // Clear form fields
-        setEmail('');
-        setPassword('');
+        setEmail("");
+        setPassword("");
         setShowPassword(false);
         // Delay redirect to show successful message
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Check location state for original URL after login
         // Redirect to original URL if present, otherwise dashboard
-        const from = location.state?.from?.pathname || '/dashboard';
-        navigate(from, { replace: true });
+        const from = location.state?.from?.pathname || "/dashboard";
         navigate(from, { replace: true });
       } else {
         // Registration flow
@@ -111,12 +120,14 @@ export default function Auth() {
           email: normalizedEmail,
           password,
         });
-        setSuccessMessage('Registration successful! Please log in.');
+        setSuccessMessage("Registration successful! Please log in.");
         // Clear form fields
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPassword('');
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setShowPassword(false);
         // Automatically switch to login form after 1.5 seconds
         setTimeout(() => {
           setIsLogin(true);
@@ -124,7 +135,7 @@ export default function Auth() {
         }, 1500);
       }
     } catch (err) {
-      setError(err.message || 'An unexpected error occurred.');
+      setError(err.message || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
@@ -243,6 +254,8 @@ export default function Auth() {
               </div>
 
               <form className={styles.auth__form} onSubmit={handleSubmit}>
+                <GoogleSignInButton mode={isLogin ? "signin" : "signup"} />
+
                 {!isLogin && (
                   <>
                     <div className={styles.auth__inputGroup}>
@@ -296,9 +309,8 @@ export default function Auth() {
                     </label>
                     {isLogin && (
                       <a
-                        type="button"
+                        href="/forgot-password"
                         className={styles.auth__labelLink}
-                        onClick={() => navigate("/forgot-password")}
                       >
                         Forgot password?
                       </a>
@@ -331,6 +343,31 @@ export default function Auth() {
                   </div>
                 </div>
 
+                {!isLogin && (
+                  <>
+                    <div className={styles.auth__inputGroup}>
+                      <label
+                        htmlFor="confirmPassword"
+                        className={styles.auth__label}
+                      >
+                        Confirm Password
+                      </label>
+                      <input
+                        id="confirmPassword"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className={`${styles.auth__input} ${styles.auth__inputPassword}`}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+
+                    <p className={styles.auth__passwordHint}>
+                      Must be at least 8 characters long.
+                    </p>
+                  </>
+                )}
+
                 {successMessage && (
                   <div className={styles.auth__success}>{successMessage}</div>
                 )}
@@ -355,15 +392,6 @@ export default function Auth() {
                       />
                     )}
                   </button>
-                </div>
-
-                <div className={styles.auth__divider}>
-                  <div className={styles.auth__dividerLine}>
-                    <div className={styles.auth__dividerBorder}></div>
-                  </div>
-                  <div className={styles.auth__dividerText}>
-                    Additional options
-                  </div>
                 </div>
               </form>
 

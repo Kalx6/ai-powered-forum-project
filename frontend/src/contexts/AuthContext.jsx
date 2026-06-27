@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/auth/auth.service.js';
+import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "../services/auth/auth.service.js";
 
 /**
  * Authentication Context providing user state and auth methods.
@@ -22,9 +22,11 @@ export function AuthProvider({ children }) {
     const storedUser = authService.getStoredUser();
 
     if (token && storedUser) {
-      setUser(storedUser);
+      setUser({
+        ...storedUser,
+        role: storedUser.role || "user",
+      });
     }
-
     setLoading(false);
   }, []);
 
@@ -32,7 +34,7 @@ export function AuthProvider({ children }) {
    * Registers a new user. Does not automatically log them in.
    * @param {Object} userData - { firstName, lastName, email, password }
    */
-  const register = async userData => {
+  const register = async (userData) => {
     setLoading(true);
     try {
       const { user } = await authService.register(userData);
@@ -48,11 +50,25 @@ export function AuthProvider({ children }) {
    * Authenticates a user and updates the session state.
    * @param {Object} credentials - { email, password }
    */
-  const login = async credentials => {
+  const login = async (credentials) => {
     setLoading(true);
     try {
-      const { user } = await authService.login(credentials);
-      setUser(user);
+      let loginResponse;
+
+      // Check if Google OAuth login (has token + user object)
+      if (credentials.token && credentials.user) {
+        loginResponse = { user: credentials.user, token: credentials.token };
+        authService.storeToken(credentials.token);
+      } else {
+        // Email/password login (existing flow)
+        loginResponse = await authService.login(credentials);
+      }
+
+      const safeUser = {
+        ...loginResponse.user,
+        role: loginResponse.user.role || "user",
+      };
+      setUser(safeUser);
       return { success: true };
     } catch (error) {
       throw error;
@@ -60,14 +76,13 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
-
   /**
    * Clears the user session and redirects to the login page.
    */
   const logout = () => {
     authService.logout();
     setUser(null);
-    navigate('/auth');
+    navigate("/auth");
   };
 
   // Context value with state and methods
@@ -91,7 +106,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
 
   return context;

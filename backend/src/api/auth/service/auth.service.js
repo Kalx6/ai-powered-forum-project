@@ -92,7 +92,7 @@ export const registerService = async ({
 export const loginService = async ({ email, password }) => {
   const normalizedEmail = normalizeEmail(email);
   const sql =
-    'SELECT user_id, first_name, last_name, email, password_hash FROM users WHERE email = ? LIMIT 1';
+    'SELECT user_id, first_name, last_name, email, password_hash, role FROM users WHERE email = ? LIMIT 1';
   const rows = await safeExecute(sql, [normalizedEmail]);
 
   if (rows.length === 0) {
@@ -110,6 +110,7 @@ export const loginService = async ({ email, password }) => {
     id: user.user_id,
     firstName: user.first_name,
     lastName: user.last_name,
+    role: user.role,
   };
 
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -120,6 +121,7 @@ export const loginService = async ({ email, password }) => {
       firstName: user.first_name,
       lastName: user.last_name,
       email: user.email,
+      role: user.role,
     },
     token,
   };
