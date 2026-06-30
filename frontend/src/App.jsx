@@ -72,7 +72,7 @@ function App() {
               <Route
                 path="/moderation"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute role="moderator">
                     <ModerationPage />
                   </ProtectedRoute>
                 }
