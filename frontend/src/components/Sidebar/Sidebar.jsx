@@ -22,7 +22,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   if (user?.role === "moderator") {
     navItems.push({
       icon: Shield,
-      label: "Flagged Content",
+      label: "Moderation",
       path: "/moderation",
     });
   }
