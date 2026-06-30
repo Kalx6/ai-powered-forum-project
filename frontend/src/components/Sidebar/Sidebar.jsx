@@ -9,10 +9,10 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "./Sidebar.module.css";
 
-export default function Sidebar() {
+export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-console.log("ROLE VALUE:", user?.role);
+  console.log("ROLE VALUE:", user?.role);
   const navItems = [
     { icon: LayoutDashboard, label: "Home", path: "/dashboard" },
     { icon: MessageSquare, label: "Your Topics", path: "/my-questions" },
@@ -28,7 +28,11 @@ console.log("ROLE VALUE:", user?.role);
   }
 
   return (
-    <aside className={styles.sidebar}>
+    <aside
+      className={`${styles.sidebar} ${
+        sidebarOpen ? styles["sidebar--open"] : ""
+      }`}
+    >
       <div className={styles.sidebar__header}>
         <div
           className={styles.sidebar__branding}
@@ -56,6 +60,7 @@ console.log("ROLE VALUE:", user?.role);
           <div key={item.path} className={styles["sidebar__nav-item-wrapper"]}>
             <NavLink
               to={item.path}
+              onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
                 `${styles.sidebar__link} ${
                   isActive
@@ -85,7 +90,10 @@ console.log("ROLE VALUE:", user?.role);
       <div className={styles.sidebar__footer}>
         <button
           type="button"
-          onClick={() => navigate("/questions/ask")}
+          onClick={() => {
+            navigate("/questions/ask");
+            setSidebarOpen(false);
+          }}
           className={styles.sidebar__button}
         >
           New Question
@@ -117,7 +125,10 @@ console.log("ROLE VALUE:", user?.role);
 
           <button
             type="button"
-            onClick={logout}
+            onClick={() => {
+              logout();
+              setSidebarOpen(false);
+            }}
             className={styles.sidebar__logout}
           >
             <LogOut size={16} />
@@ -128,4 +139,3 @@ console.log("ROLE VALUE:", user?.role);
     </aside>
   );
 }
-
