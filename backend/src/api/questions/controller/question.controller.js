@@ -25,6 +25,7 @@ export async function searchQuestionsSemanticController(req, res, next) {
       k,
       threshold,
     });
+    // Return
 
     return res.status(200).json({
       success: true,
@@ -52,7 +53,7 @@ async function getSimilarQuestionsController(req, res, next) {
 
     return res.status(200).json({
       success: true,
-      message: "Similar questions fetched successfully",
+      message: "Similar questions fetched successfully1",
       data: results,
       meta,
     });
