@@ -53,7 +53,7 @@ async function getSimilarQuestionsController(req, res, next) {
 
     return res.status(200).json({
       success: true,
-      message: "Similar questions fetched successfully1",
+      message: "Similar questions fetched successfully",
       data: results,
       meta,
     });
