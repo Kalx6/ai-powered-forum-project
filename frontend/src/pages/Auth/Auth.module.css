@@ -4,7 +4,7 @@
 .auth {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   background-color: var(--background);
 }
 
@@ -186,6 +186,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap; /* ← allow wrapping instead of forcing one line */
 }
 
 .auth__infoAvatars {

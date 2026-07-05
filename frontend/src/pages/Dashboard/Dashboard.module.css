@@ -11,7 +11,7 @@
 
 /* ─── hero section ─────────────────────────────────────────────────────────── */
 .hero {
-  /* background: var(--color-background-primary); */ 
+  /* background: var(--color-background-primary); */
   background: white;
   border: 1px solid lightgray;
   border-radius: 10px;
@@ -26,7 +26,7 @@
   font-size: 0.75rem;
   font-weight: bold;
   letter-spacing: 0.06em;
-  color: #EA580C;
+  color: #ea580c;
   margin: 0;
 }
 
@@ -55,7 +55,7 @@
   margin-top: 10spx;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .quickActions {
     grid-template-columns: 1fr;
   }
@@ -66,12 +66,14 @@
   align-items: flex-start;
   gap: 12px;
   padding: 1rem 1.1rem;
-  background: #F9FAFC;
+  background: #f9fafc;
   border: 0.5px solid lightgray;
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
-  transition: background 0.12s, border-color 0.12s;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
   width: 100%;
 }
 
@@ -89,7 +91,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #EA580C;
+  color: #ea580c;
   background: #f8faff;
 }
 
@@ -153,7 +155,7 @@
 }
 
 .statCard {
-  background: #F9FAFC;
+  background: #f9fafc;
   border: 0.5px solid lightgray;
   border-radius: 10px;
   padding: 0.875rem 1rem;
@@ -211,7 +213,7 @@
   font-weight: 500;
   letter-spacing: 0.05em;
   border-radius: 8px;
-  background: #EA580C;
+  background: #ea580c;
   color: #fff;
   white-space: nowrap;
   align-self: center;
@@ -243,13 +245,13 @@
 }
 
 .row:focus-visible {
-  outline: 2px solid #D85A30;
+  outline: 2px solid #d85a30;
   outline-offset: -2px;
 }
 
 /* user's own question gets orange left accent */
 .row--own {
-  border-left-color: #D85A30;
+  border-left-color: #d85a30;
 }
 
 .row__avatar {
@@ -303,12 +305,12 @@
 }
 
 .row:hover .row__title {
-  color: #993C1D;
+  color: #993c1d;
 }
 
 @media (prefers-color-scheme: dark) {
   .row:hover .row__title {
-    color: #F09975;
+    color: #f09975;
   }
 }
 
@@ -320,7 +322,7 @@
   padding: 2px 6px;
   border-radius: 5px;
   background: rgb(255, 216, 202);
-  color: #993C1D;
+  color: #993c1d;
   border: 0.5px solid #846459;
 }
 
@@ -367,16 +369,16 @@
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 500;
-  background: #EEEDFE;
-  color: #3C3489;
-  border: 0.5px solid #AFA9EC;
+  background: #eeedfe;
+  color: #3c3489;
+  border: 0.5px solid #afa9ec;
 }
 
 @media (prefers-color-scheme: dark) {
   .row__score {
-    background: #26215C;
-    border-color: #534AB7;
-    color: #CECBF6;
+    background: #26215c;
+    border-color: #534ab7;
+    color: #cecbf6;
   }
 }
 
@@ -450,7 +452,7 @@
 
 /* ─── spinner ──────────────────────────────────────────────────────────────── */
 .spinner {
-  color: #D85A30;
+  color: #d85a30;
   display: flex;
   align-items: center;
   justify-content: center;
