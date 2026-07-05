@@ -117,7 +117,7 @@ async function hydrateCitations(topMatches) {
 
     rows.forEach((row) => {
       citations.push({
-        id: row.answer_id,
+        id: String(row.answer_id),
         type: "answer",
         title: row.content.slice(0, 100),
         score: scoreMap.get(`answer:${row.answer_id}`),
