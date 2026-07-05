@@ -11,7 +11,7 @@ const Moderation = () => {
   const fetchQueue = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3777/api/moderation/queue",
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:3777"}/api/moderation/queue`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const Moderation = () => {
   const handleAction = async (id, action) => {
     try {
       await axios.patch(
-        `http://localhost:3777/api/moderation/${id}/resolve`,
+        `${import.meta.env.VITE_API_BASE_URL || "http://localhost:3777"}/api/moderation/${id}/resolve`,
         { action },
         {
           headers: {

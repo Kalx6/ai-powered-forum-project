@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3777/api/moderation";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL || "http://localhost:3777"}/api/moderation`;
 
 export const getModerationQueue = async (token) => {
   const response = await axios.get(`${API_URL}/queue`, {
