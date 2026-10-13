@@ -206,7 +206,7 @@ Frontend runs at `http://localhost:5173`, backend at `http://localhost:3777`.
 
 ## 👥 Team
 
-Built by a 6-person team as part of the Evangadi Academy bootcamp program.
+Built by a 5-person team as part of the Evangadi Academy bootcamp program.
 
 | Contributor       | Role                                                       |
 | ----------------- | ---------------------------------------------------------- |
